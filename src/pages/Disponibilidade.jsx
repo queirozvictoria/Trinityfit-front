@@ -1,0 +1,261 @@
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import "./Disponibilidade.css";
+
+const API_URL = "http://localhost:3000";
+
+// Personal "logado" (fixo por enquanto, troque quando o login estiver pronto).
+const CODIGO_PERSONAL = 1;
+
+function soData(valor) {
+  return valor ? String(valor).split("T")[0] : "";
+}
+
+function formatarData(valor) {
+  const [ano, mes, dia] = soData(valor).split("-");
+  return ano && mes && dia ? `${dia}/${mes}/${ano}` : "Data não informada";
+}
+
+function formatarHorario(valor) {
+  return valor ? String(valor).slice(0, 5) : "--:--";
+}
+
+async function lerJson(response) {
+  const texto = await response.text();
+
+  try {
+    return texto ? JSON.parse(texto) : {};
+  } catch {
+    throw new Error("O servidor retornou uma resposta inválida.");
+  }
+}
+
+export default function Disponibilidade() {
+  const navigate = useNavigate();
+
+  const hoje = new Date().toLocaleDateString("en-CA"); // aaaa-mm-dd
+
+  const [horarios, setHorarios] = useState([]);
+  const [data, setData] = useState("");
+  const [horarioInicio, setHorarioInicio] = useState("");
+  const [horarioFim, setHorarioFim] = useState("");
+
+  const [carregando, setCarregando] = useState(true);
+  const [salvando, setSalvando] = useState(false);
+  const [removendoId, setRemovendoId] = useState(null);
+  const [erro, setErro] = useState("");
+  const [mensagem, setMensagem] = useState("");
+
+  // GET /disponibilidade/personal/:codigoPersonal/ativas
+  const buscarHorarios = useCallback(async () => {
+    try {
+      setCarregando(true);
+      setErro("");
+
+      const response = await fetch(
+        `${API_URL}/disponibilidade/personal/${CODIGO_PERSONAL}/ativas`
+      );
+      const dados = await lerJson(response);
+
+      if (!response.ok) {
+        throw new Error(dados.erro || "Não foi possível carregar os horários.");
+      }
+
+      setHorarios(Array.isArray(dados) ? dados : []);
+    } catch (error) {
+      console.error("Erro ao buscar horários:", error);
+      setHorarios([]);
+      setErro(error.message || "Não foi possível carregar os horários.");
+    } finally {
+      setCarregando(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    buscarHorarios();
+  }, [buscarHorarios]);
+
+  // POST /disponibilidade
+  async function adicionar(event) {
+    event.preventDefault();
+
+    if (!data || !horarioInicio || !horarioFim) {
+      setErro("Preencha a data, o início e o fim.");
+      return;
+    }
+
+    if (horarioFim <= horarioInicio) {
+      setErro("O horário final precisa ser depois do inicial.");
+      return;
+    }
+
+    try {
+      setSalvando(true);
+      setErro("");
+      setMensagem("");
+
+      const response = await fetch(`${API_URL}/disponibilidade`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          codigoPersonal: CODIGO_PERSONAL,
+          dataDisponibilidade: data,
+          horarioInicio,
+          horarioFim,
+          status: true,
+        }),
+      });
+
+      const dados = await lerJson(response);
+
+      if (!response.ok) {
+        throw new Error(dados.erro || "Não foi possível salvar o horário.");
+      }
+
+      setMensagem("Horário adicionado com sucesso.");
+      setHorarioInicio("");
+      setHorarioFim("");
+      await buscarHorarios();
+    } catch (error) {
+      console.error("Erro ao salvar horário:", error);
+      setErro(error.message || "Não foi possível salvar o horário.");
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  // DELETE /disponibilidade/:id
+  async function remover(item) {
+    const confirmou = window.confirm(
+      `Remover o horário de ${formatarData(item.dataDisponibilidade)} às ${formatarHorario(item.horarioInicio)}?`
+    );
+
+    if (!confirmou) return;
+
+    try {
+      setRemovendoId(item.codigoDisponibilidade);
+      setErro("");
+      setMensagem("");
+
+      const response = await fetch(
+        `${API_URL}/disponibilidade/${item.codigoDisponibilidade}`,
+        { method: "DELETE" }
+      );
+      const dados = await lerJson(response);
+
+      if (!response.ok) {
+        throw new Error(dados.erro || "Não foi possível remover o horário.");
+      }
+
+      setHorarios((lista) =>
+        lista.filter(
+          (h) => h.codigoDisponibilidade !== item.codigoDisponibilidade
+        )
+      );
+      setMensagem("Horário removido.");
+    } catch (error) {
+      console.error("Erro ao remover horário:", error);
+      setErro(error.message || "Não foi possível remover o horário.");
+    } finally {
+      setRemovendoId(null);
+    }
+  }
+
+  return (
+    <main className="disp">
+      <div className="disp-container">
+        <header className="disp-cabecalho">
+          <h1>Meus horários disponíveis</h1>
+          <p>Cadastre os dias e horários em que você atende. Seus alunos só poderão agendar nesses horários.</p>
+        </header>
+
+        <form className="disp-form" onSubmit={adicionar}>
+          <label htmlFor="data">Dia</label>
+          <input
+            id="data"
+            type="date"
+            min={hoje}
+            value={data}
+            onChange={(e) => setData(e.target.value)}
+            required
+          />
+
+          <div className="disp-linha">
+            <div>
+              <label htmlFor="inicio">Início</label>
+              <input
+                id="inicio"
+                type="time"
+                value={horarioInicio}
+                onChange={(e) => setHorarioInicio(e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="fim">Fim</label>
+              <input
+                id="fim"
+                type="time"
+                value={horarioFim}
+                onChange={(e) => setHorarioFim(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
+          <button type="submit" className="disp-btn" disabled={salvando}>
+            {salvando ? "Salvando..." : "Adicionar horário"}
+          </button>
+        </form>
+
+        {mensagem && <p className="disp-msg disp-sucesso">{mensagem}</p>}
+        {erro && <p className="disp-msg disp-erro">{erro}</p>}
+
+        <h2 className="disp-subtitulo">Horários livres</h2>
+
+        {carregando && <p className="disp-vazio">Carregando...</p>}
+
+        {!carregando && horarios.length === 0 && (
+          <p className="disp-vazio">Você ainda não cadastrou horários.</p>
+        )}
+
+        {!carregando && horarios.length > 0 && (
+          <ul className="disp-lista">
+            {horarios.map((item) => (
+              <li key={item.codigoDisponibilidade} className="disp-card">
+                <div>
+                  <strong>{formatarData(item.dataDisponibilidade)}</strong>
+                  <span>
+                    {formatarHorario(item.horarioInicio)} às{" "}
+                    {formatarHorario(item.horarioFim)}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  className="disp-btn-remover"
+                  onClick={() => remover(item)}
+                  disabled={removendoId !== null}
+                >
+                  {removendoId === item.codigoDisponibilidade
+                    ? "Removendo..."
+                    : "Remover"}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <button
+          type="button"
+          className="disp-btn-voltar"
+          onClick={() => navigate("/personal")}
+        >
+          Voltar
+        </button>
+      </div>
+    </main>
+  );
+}

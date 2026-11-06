@@ -1,0 +1,643 @@
+/* =========================================================
+   RESET
+========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #faf8fc;
+  color: #432080;
+}
+
+button {
+  font: inherit;
+}
+
+
+/* =========================================================
+   PÁGINA — PLANILHAS DE TREINO
+========================================================= */
+
+.planilha-treino {
+  min-height: 100vh;
+  padding: 50px 25px;
+
+  background:
+    radial-gradient(
+      circle at top center,
+      rgba(181, 118, 244, 0.10),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(175, 11, 216, 0.04),
+      transparent 30%
+    ),
+    #faf8fc;
+}
+
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.planilha-treino-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.planilha-treino-cabecalho {
+  margin-bottom: 35px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #e8dff0;
+  text-align: center;
+}
+
+.planilha-treino-cabecalho h1 {
+  margin: 0 0 10px;
+  color: #432080;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+
+.planilha-treino-cabecalho h1::after {
+  content: "";
+  display: block;
+  width: 58px;
+  height: 4px;
+  margin: 15px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #432080, #af0bd8);
+}
+
+.planilha-treino-cabecalho p {
+  max-width: 650px;
+  margin: 15px auto 0;
+  color: #76658a;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   ÁREA DO BOTÃO CRIAR
+========================================================= */
+
+.planilha-treino-topo {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 28px;
+}
+
+
+/* =========================================================
+   BOTÃO CRIAR
+========================================================= */
+
+.botao-criar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 46px;
+  padding: 13px 23px;
+
+  border: 1px solid #af0bd8;
+  border-radius: 11px;
+
+  background: linear-gradient(135deg, #432080, #af0bd8);
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow: 0 6px 16px rgba(67, 32, 128, 0.14);
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.botao-criar:hover {
+  background: linear-gradient(135deg, #512995, #950995);
+  border-color: #950995;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(67, 32, 128, 0.20);
+}
+
+.botao-criar:active {
+  transform: translateY(0);
+}
+
+.botao-criar:focus-visible {
+  outline: 3px solid rgba(175, 11, 216, 0.45);
+  outline-offset: 4px;
+}
+
+
+/* =========================================================
+   LISTA DE PLANILHAS
+========================================================= */
+
+.planilhas-lista {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+
+/* =========================================================
+   CARD DA PLANILHA
+========================================================= */
+
+.planilha-card {
+  position: relative;
+  isolation: isolate;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 245px;
+  padding: 28px;
+
+  overflow: hidden;
+
+  background: linear-gradient(145deg, #ffffff 0%, #fdfaff 100%);
+
+  border: 1px solid #e1d5e8;
+  border-radius: 18px;
+
+  box-shadow:
+    0 5px 15px rgba(67, 32, 128, 0.05),
+    0 15px 30px rgba(67, 32, 128, 0.05);
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* =========================================================
+   DETALHE DECORATIVO
+========================================================= */
+
+.planilha-card::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -45px;
+  right: -45px;
+
+  width: 120px;
+  height: 120px;
+
+  border-radius: 50%;
+  background-color: rgba(181, 118, 244, 0.08);
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   DETALHE LATERAL
+========================================================= */
+
+.planilha-card::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+
+  width: 5px;
+  height: 100%;
+
+  border-radius: 18px 0 0 18px;
+
+  background: linear-gradient(
+    180deg,
+    #432080,
+    #af0bd8,
+    #b576f4
+  );
+
+  opacity: 0;
+  transition: opacity 0.25s ease;
+
+  pointer-events: none;
+}
+
+.planilha-card:hover::before {
+  opacity: 1;
+}
+
+
+/* =========================================================
+   HOVER DO CARD
+========================================================= */
+
+.planilha-card:hover {
+  transform: translateY(-5px);
+  border-color: #b576f4;
+
+  background: linear-gradient(145deg, #ffffff 0%, #fdf9ff 100%);
+
+  box-shadow:
+    0 10px 22px rgba(67, 32, 128, 0.08),
+    0 18px 35px rgba(67, 32, 128, 0.10);
+}
+
+
+/* =========================================================
+   TÍTULO DA PLANILHA
+========================================================= */
+
+.planilha-card h3 {
+  position: relative;
+  z-index: 2;
+
+  margin: 0 0 20px;
+
+  color: #432080;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   INFORMAÇÕES
+========================================================= */
+
+.planilha-card p {
+  position: relative;
+  z-index: 2;
+
+  margin: 10px 0;
+
+  color: #76658a;
+  font-size: 15px;
+  line-height: 1.6;
+
+  overflow-wrap: anywhere;
+}
+
+.planilha-card p strong {
+  color: #5c4a70;
+  font-weight: 700;
+}
+
+.planilha-card p:last-of-type {
+  margin-bottom: 0;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status {
+  position: relative;
+  z-index: 2;
+
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+
+  max-width: 100%;
+  margin-top: 10px;
+  padding: 7px 14px;
+
+  border: 1px solid #dfc8ee;
+  border-radius: 20px;
+
+  background-color: #f7ecfc;
+  color: #950995;
+
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   AÇÕES DO PERSONAL
+========================================================= */
+
+.acoes {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+
+/* =========================================================
+   BOTÃO EDITAR
+========================================================= */
+
+.botao-editar {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 11px 15px;
+
+  border: 1px solid #af0bd8;
+  border-radius: 9px;
+
+  background-color: #ffffff;
+  color: #950995;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.botao-editar:hover {
+  background-color: #af0bd8;
+  border-color: #af0bd8;
+  color: #ffffff;
+
+  box-shadow: 0 6px 16px rgba(175, 11, 216, 0.18);
+  transform: translateY(-1px);
+}
+
+.botao-editar:active {
+  transform: scale(0.98);
+}
+
+.botao-editar:focus-visible {
+  outline: 3px solid rgba(175, 11, 216, 0.45);
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   BOTÃO EXCLUIR
+========================================================= */
+
+.botao-excluir {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 11px 15px;
+
+  border: 1px solid #d8c9df;
+  border-radius: 9px;
+
+  background-color: #ffffff;
+  color: #76658a;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.botao-excluir:hover {
+  background-color: #f5eff8;
+  border-color: #b9a5c3;
+  color: #432080;
+
+  box-shadow: 0 6px 16px rgba(67, 32, 128, 0.10);
+  transform: translateY(-1px);
+}
+
+.botao-excluir:active {
+  transform: scale(0.98);
+}
+
+.botao-excluir:focus-visible {
+  outline: 3px solid rgba(67, 32, 128, 0.30);
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   MENSAGEM SEM PLANILHAS
+========================================================= */
+
+.sem-planilhas {
+  padding: 45px 30px;
+
+  text-align: center;
+
+  background: linear-gradient(145deg, #ffffff 0%, #fdfaff 100%);
+
+  border: 1px dashed #cbb6d8;
+  border-radius: 18px;
+
+  box-shadow: 0 5px 15px rgba(67, 32, 128, 0.04);
+}
+
+.sem-planilhas h2 {
+  margin: 0 0 10px;
+  color: #432080;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.sem-planilhas p {
+  max-width: 550px;
+  margin: 0 auto;
+
+  color: #76658a;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 700px) {
+  .planilha-treino {
+    padding: 40px 20px;
+  }
+
+  .planilha-treino-cabecalho {
+    margin-bottom: 30px;
+    padding-bottom: 22px;
+  }
+
+  .planilha-treino-cabecalho h1 {
+    font-size: 30px;
+  }
+
+  .planilha-treino-cabecalho p {
+    font-size: 16px;
+  }
+
+  .planilha-treino-topo {
+    justify-content: stretch;
+    margin-bottom: 22px;
+  }
+
+  .botao-criar {
+    width: 100%;
+  }
+
+  .planilhas-lista {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .planilha-card {
+    min-height: auto;
+    padding: 24px;
+    border-radius: 16px;
+  }
+
+  .planilha-card::before {
+    border-radius: 16px 0 0 16px;
+  }
+
+  .planilha-card h3 {
+    font-size: 21px;
+  }
+}
+
+
+/* =========================================================
+   CELULAR
+========================================================= */
+
+@media (max-width: 480px) {
+  .planilha-treino {
+    padding: 30px 15px;
+  }
+
+  .planilha-treino-cabecalho {
+    margin-bottom: 25px;
+  }
+
+  .planilha-treino-cabecalho h1 {
+    font-size: 27px;
+  }
+
+  .planilha-treino-cabecalho p {
+    font-size: 15px;
+  }
+
+  .planilhas-lista {
+    gap: 13px;
+  }
+
+  .planilha-card {
+    padding: 21px;
+    border-radius: 15px;
+  }
+
+  .planilha-card::before {
+    border-radius: 15px 0 0 15px;
+  }
+
+  .planilha-card h3 {
+    margin-bottom: 16px;
+    font-size: 20px;
+  }
+
+  .planilha-card p {
+    font-size: 14px;
+  }
+
+  .status {
+    font-size: 12px;
+  }
+
+  .acoes {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .botao-editar,
+  .botao-excluir {
+    width: 100%;
+  }
+
+  .sem-planilhas {
+    padding: 35px 20px;
+  }
+}
+
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .planilha-card,
+  .planilha-card::before,
+  .botao-criar,
+  .botao-editar,
+  .botao-excluir {
+    transition: none;
+  }
+
+  .planilha-card:hover,
+  .botao-criar:hover,
+  .botao-editar:hover,
+  .botao-excluir:hover {
+    transform: none;
+  }
+}

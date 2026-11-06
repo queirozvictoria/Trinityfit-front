@@ -1,0 +1,393 @@
+
+/* =========================================================
+   MEUS HORÁRIOS — IDENTIDADE VISUAL DO PROJETO
+========================================================= */
+
+.meus-horarios,
+.meus-horarios * {
+  box-sizing: border-box;
+}
+
+.meus-horarios {
+  min-height: 100vh;
+  padding: 50px 25px;
+  color: #432080;
+
+  background:
+    radial-gradient(
+      circle at top center,
+      rgba(181, 118, 244, 0.10),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(175, 11, 216, 0.04),
+      transparent 30%
+    ),
+    #faf8fc;
+}
+
+.meus-horarios-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.meus-horarios-cabecalho {
+  margin-bottom: 32px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid #e8dff0;
+  text-align: center;
+}
+
+.meus-horarios-cabecalho h1 {
+  margin: 0 0 10px;
+  color: #432080;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.meus-horarios-cabecalho h1::after {
+  content: "";
+  display: block;
+  width: 58px;
+  height: 4px;
+  margin: 15px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    #432080,
+    #af0bd8,
+    #b576f4
+  );
+}
+
+.meus-horarios-cabecalho p {
+  margin: 15px auto 0;
+  color: #76658a;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   LISTA DE HORÁRIOS
+========================================================= */
+
+.lista-horarios {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+/* =========================================================
+   CARTÃO DE HORÁRIO
+========================================================= */
+
+.horario-card {
+  position: relative;
+  padding: 25px;
+  overflow: hidden;
+
+  background: linear-gradient(
+    145deg,
+    #ffffff 0%,
+    #fdfaff 100%
+  );
+
+  border: 1px solid #e1d5e8;
+  border-radius: 18px;
+
+  box-shadow:
+    0 5px 15px rgba(67, 32, 128, 0.04),
+    0 12px 28px rgba(67, 32, 128, 0.04);
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.horario-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+
+  background: linear-gradient(
+    180deg,
+    #432080,
+    #af0bd8,
+    #b576f4
+  );
+}
+
+.horario-card:hover {
+  transform: translateY(-3px);
+  border-color: #cbb6d8;
+
+  box-shadow:
+    0 9px 20px rgba(67, 32, 128, 0.07),
+    0 15px 30px rgba(67, 32, 128, 0.04);
+}
+
+.horario-card h2 {
+  margin: 0 0 14px;
+  color: #432080;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.horario-card p {
+  margin: 8px 0;
+  color: #76658a;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.horario-card strong {
+  color: #5c4a70;
+}
+
+/* =========================================================
+   DIA E HORÁRIO
+========================================================= */
+
+.horario-detalhes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.horario-detalhe {
+  padding: 13px;
+  background-color: #faf8fc;
+  border: 1px solid #e8dff0;
+  border-radius: 12px;
+}
+
+.horario-detalhe span {
+  display: block;
+  margin-bottom: 5px;
+  color: #76658a;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.horario-detalhe strong {
+  display: block;
+  color: #432080;
+  font-size: 15px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   LISTA VAZIA
+========================================================= */
+
+.horarios-vazios {
+  padding: 42px 25px;
+  text-align: center;
+
+  background: linear-gradient(
+    145deg,
+    #ffffff 0%,
+    #fdfaff 100%
+  );
+
+  border: 1px dashed #cbb6d8;
+  border-radius: 18px;
+
+  box-shadow:
+    0 5px 15px rgba(67, 32, 128, 0.04);
+}
+
+.horarios-vazios h2 {
+  margin: 0 0 10px;
+  color: #432080;
+  font-size: 23px;
+}
+
+.horarios-vazios p {
+  max-width: 550px;
+  margin: 0 auto;
+  color: #76658a;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+
+.meus-horarios button {
+  font-family: inherit;
+}
+
+.botao-horario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+  padding: 11px 18px;
+
+  border: 1px solid #dfd0e8;
+  border-radius: 10px;
+
+  background-color: #ffffff;
+  color: #432080;
+
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow:
+    0 3px 10px rgba(67, 32, 128, 0.03);
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.botao-horario:hover {
+  background-color: #f5eff8;
+  border-color: #cbb6d8;
+  box-shadow:
+    0 5px 14px rgba(67, 32, 128, 0.07);
+  transform: translateY(-1px);
+}
+
+.botao-horario:active {
+  transform: scale(0.98);
+}
+
+.meus-horarios button:focus-visible {
+  outline: 3px solid rgba(67, 32, 128, 0.2);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   CARREGAMENTO E ERRO
+========================================================= */
+
+.horarios-carregando,
+.horarios-erro {
+  padding: 30px 25px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid #dfd0e8;
+  border-radius: 18px;
+  box-shadow: 0 5px 15px rgba(67, 32, 128, 0.04);
+}
+
+.horarios-carregando p,
+.horarios-erro p {
+  color: #76658a;
+  line-height: 1.7;
+}
+
+.horarios-erro {
+  border-color: #e7c9dc;
+}
+
+.horarios-erro h2 {
+  color: #432080;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 700px) {
+  .meus-horarios {
+    padding: 40px 20px;
+  }
+
+  .meus-horarios-cabecalho h1 {
+    font-size: 30px;
+  }
+
+  .lista-horarios {
+    grid-template-columns: 1fr;
+  }
+
+  .horario-card {
+    padding: 22px;
+  }
+}
+
+/* =========================================================
+   CELULAR
+========================================================= */
+
+@media (max-width: 480px) {
+  .meus-horarios {
+    padding: 30px 15px;
+  }
+
+  .meus-horarios-cabecalho {
+    margin-bottom: 25px;
+    padding-bottom: 22px;
+  }
+
+  .meus-horarios-cabecalho h1 {
+    font-size: 27px;
+  }
+
+  .meus-horarios-cabecalho p {
+    font-size: 15px;
+  }
+
+  .lista-horarios {
+    gap: 13px;
+  }
+
+  .horario-card {
+    padding: 20px;
+    border-radius: 15px;
+  }
+
+  .horario-card h2 {
+    font-size: 19px;
+  }
+
+  .horario-detalhes {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .horarios-vazios {
+    padding: 35px 20px;
+  }
+}
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .horario-card,
+  .botao-horario {
+    transition: none;
+  }
+
+  .horario-card:hover,
+  .botao-horario:hover {
+    transform: none;
+  }
+}

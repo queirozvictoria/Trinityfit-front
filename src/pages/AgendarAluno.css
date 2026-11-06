@@ -1,0 +1,194 @@
+/* ==============================
+   AGENDAR (ALUNO)
+============================== */
+
+.agendar {
+  min-height: 100vh;
+  padding: 32px 16px;
+  background: #f7f4fb;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #4a1d7a;
+}
+
+.agendar *,
+.agendar *::before,
+.agendar *::after {
+  box-sizing: border-box;
+}
+
+.agendar-container {
+  width: 100%;
+  max-width: 520px;
+}
+
+/* ---------- Cabeçalho ---------- */
+
+.agendar-cabecalho {
+  margin-bottom: 24px;
+}
+
+.agendar-cabecalho h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #3f1a73;
+}
+
+.agendar-cabecalho p {
+  margin: 0;
+  font-size: 16px;
+  color: #6b4a96;
+}
+
+/* ---------- Formulário (cartão) ---------- */
+
+.agendar-form {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 28px 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #fbf8ff 100%);
+  border: 1px solid #e3d5f3;
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(74, 29, 122, 0.08);
+}
+
+/* círculo decorativo, como nos cartões de alunos */
+.agendar-form::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: #f5effd;
+  pointer-events: none;
+}
+
+.agendar-form > * {
+  position: relative;
+  z-index: 1;
+}
+
+.agendar-form label {
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #3f1a73;
+}
+
+.agendar-form p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #6b4a96;
+}
+
+/* ---------- Campos ---------- */
+
+.agendar-form select,
+.agendar-form input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  color: #3f1a73;
+  background: #ffffff;
+  border: 1px solid #d9c7ee;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.agendar-form select:focus,
+.agendar-form input:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18);
+}
+
+.agendar-form select:disabled,
+.agendar-form input:disabled {
+  background: #f1ebf8;
+  cursor: not-allowed;
+}
+
+/* ---------- Erro ---------- */
+
+.agendar-form .erro {
+  margin: 0 0 8px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #9b1c3a;
+  background: #fdecef;
+  border: 1px solid #f4c2cd;
+  border-radius: 12px;
+}
+
+/* ---------- Botões ---------- */
+
+.agendar-acoes {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.agendar-acoes button {
+  flex: 1;
+  padding: 13px 16px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+}
+
+/* Voltar */
+.agendar-acoes button[type="button"] {
+  color: #4a1d7a;
+  background: #ffffff;
+  border: 1px solid #d9c7ee;
+}
+
+.agendar-acoes button[type="button"]:hover:not(:disabled) {
+  background: #f5effd;
+}
+
+/* Agendar */
+.agendar-acoes button[type="submit"] {
+  color: #ffffff;
+  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+  border: none;
+  box-shadow: 0 6px 16px rgba(91, 33, 182, 0.28);
+}
+
+.agendar-acoes button[type="submit"]:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(91, 33, 182, 0.34);
+}
+
+.agendar-acoes button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- Celular ---------- */
+
+@media (max-width: 480px) {
+  .agendar {
+    padding: 20px 12px;
+  }
+
+  .agendar-form {
+    padding: 22px 18px;
+  }
+
+  .agendar-acoes {
+    flex-direction: column-reverse;
+  }
+}

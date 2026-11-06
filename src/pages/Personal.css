@@ -1,0 +1,405 @@
+/* =========================================================
+   RESET
+========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #faf8fc;
+  color: #432080;
+}
+
+button {
+  font: inherit;
+}
+
+
+/* =========================================================
+   PÁGINA DO PERSONAL
+========================================================= */
+
+.personal {
+  min-height: 100vh;
+  padding: 50px 25px;
+
+  background:
+    radial-gradient(
+      circle at top center,
+      rgba(181, 118, 244, 0.10),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(175, 11, 216, 0.04),
+      transparent 30%
+    ),
+    #faf8fc;
+}
+
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.personal-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.personal-cabecalho {
+  margin-bottom: 45px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #e8dff0;
+  text-align: center;
+}
+
+.personal-cabecalho h1 {
+  margin: 0 0 10px;
+  color: #432080;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+
+.personal-cabecalho h1::after {
+  content: "";
+  display: block;
+  width: 58px;
+  height: 4px;
+  margin: 15px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #432080, #af0bd8);
+}
+
+.personal-cabecalho p {
+  max-width: 650px;
+  margin: 15px auto 0;
+  color: #76658a;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   TÍTULO DOS SERVIÇOS
+========================================================= */
+
+.personal-servicos-titulo {
+  margin: 0 0 28px;
+  color: #432080;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   LISTA DE SERVIÇOS
+========================================================= */
+
+.personal-servicos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+
+/* =========================================================
+   CARD / BOTÃO
+========================================================= */
+
+.personal-servico {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-width: 0;
+  min-height: 190px;
+  padding: 28px;
+  overflow: hidden;
+
+  background: linear-gradient(145deg, #ffffff 0%, #fdfaff 100%);
+
+  border: 1px solid #e1d5e8;
+  border-radius: 18px;
+
+  box-shadow:
+    0 5px 15px rgba(67, 32, 128, 0.05),
+    0 15px 30px rgba(67, 32, 128, 0.05);
+
+  color: #432080;
+  font-family: inherit;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+button.personal-servico {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+
+/* =========================================================
+   DETALHE DECORATIVO
+========================================================= */
+
+.personal-servico::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -45px;
+  right: -45px;
+
+  width: 120px;
+  height: 120px;
+
+  border-radius: 50%;
+  background-color: rgba(181, 118, 244, 0.08);
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   DETALHE LATERAL
+========================================================= */
+
+.personal-servico::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+
+  width: 5px;
+  height: 100%;
+
+  border-radius: 18px 0 0 18px;
+
+  background: linear-gradient(
+    180deg,
+    #432080,
+    #af0bd8,
+    #b576f4
+  );
+
+  opacity: 0;
+  transition: opacity 0.25s ease;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   HOVER E INTERAÇÃO
+========================================================= */
+
+.personal-servico:hover {
+  transform: translateY(-5px);
+  border-color: #b576f4;
+
+  background: linear-gradient(145deg, #ffffff 0%, #fdf9ff 100%);
+
+  box-shadow:
+    0 10px 22px rgba(67, 32, 128, 0.08),
+    0 18px 35px rgba(67, 32, 128, 0.10);
+}
+
+.personal-servico:hover::before {
+  opacity: 1;
+}
+
+.personal-servico:active {
+  transform: translateY(-2px);
+}
+
+.personal-servico:focus-visible {
+  outline: 3px solid rgba(175, 11, 216, 0.45);
+  outline-offset: 4px;
+}
+
+
+/* =========================================================
+   TÍTULO DO SERVIÇO
+========================================================= */
+
+.personal-servico h3 {
+  position: relative;
+  z-index: 2;
+
+  margin: 0 0 14px;
+
+  color: #432080;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   DESCRIÇÃO
+========================================================= */
+
+.personal-servico p {
+  position: relative;
+  z-index: 2;
+
+  margin: 0;
+
+  color: #76658a;
+  font-size: 15px;
+  line-height: 1.7;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 700px) {
+  .personal {
+    padding: 40px 20px;
+  }
+
+  .personal-cabecalho {
+    margin-bottom: 35px;
+    padding-bottom: 22px;
+  }
+
+  .personal-cabecalho h1 {
+    font-size: 30px;
+  }
+
+  .personal-cabecalho p {
+    font-size: 16px;
+  }
+
+  .personal-servicos-titulo {
+    margin-bottom: 24px;
+    font-size: 26px;
+  }
+
+  .personal-servicos {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .personal-servico {
+    min-height: auto;
+    padding: 25px;
+    border-radius: 16px;
+  }
+
+  .personal-servico::before {
+    border-radius: 16px 0 0 16px;
+  }
+
+  .personal-servico h3 {
+    font-size: 21px;
+  }
+
+  .personal-servico p {
+    font-size: 15px;
+  }
+}
+
+
+/* =========================================================
+   CELULAR
+========================================================= */
+
+@media (max-width: 480px) {
+  .personal {
+    padding: 30px 15px;
+  }
+
+  .personal-cabecalho {
+    margin-bottom: 30px;
+  }
+
+  .personal-cabecalho h1 {
+    font-size: 27px;
+  }
+
+  .personal-cabecalho p {
+    font-size: 15px;
+  }
+
+  .personal-servicos-titulo {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+  .personal-servicos {
+    gap: 13px;
+  }
+
+  .personal-servico {
+    padding: 21px;
+    border-radius: 15px;
+  }
+
+  .personal-servico::before {
+    border-radius: 15px 0 0 15px;
+  }
+
+  .personal-servico h3 {
+    margin-bottom: 11px;
+    font-size: 20px;
+  }
+
+  .personal-servico p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+}
+
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .personal-servico,
+  .personal-servico::before {
+    transition: none;
+  }
+
+  .personal-servico:hover,
+  .personal-servico:active {
+    transform: none;
+  }
+}

@@ -1,0 +1,449 @@
+
+/* =========================================
+   ALTERAR HORÁRIO — ESTILO MODERNO
+   ========================================= */
+
+.alterar-horario {
+  min-height: 100vh;
+  padding: 60px 20px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(59, 130, 246, 0.13),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 90% 85%,
+      rgba(6, 182, 212, 0.12),
+      transparent 30%
+    ),
+    #f1f5f9;
+}
+
+/* =========================================
+   CARTÃO PRINCIPAL
+   ========================================= */
+
+.alterar-horario-container {
+  position: relative;
+  overflow: hidden;
+
+  width: 100%;
+  max-width: 680px;
+  padding: 42px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 24px;
+
+  box-shadow:
+    0 24px 70px rgba(15, 23, 42, 0.09),
+    0 4px 14px rgba(15, 23, 42, 0.04);
+
+  animation: aparecerHorario 0.45s ease both;
+}
+
+.alterar-horario-container::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+
+  background: linear-gradient(
+    90deg,
+    #1d4ed8,
+    #3b82f6,
+    #06b6d4
+  );
+}
+
+/* =========================================
+   CABEÇALHO
+   ========================================= */
+
+.alterar-horario-cabecalho {
+  margin-bottom: 30px;
+}
+
+.alterar-horario-cabecalho h1 {
+  margin: 0 0 12px;
+
+  color: #0f172a;
+  font-size: clamp(27px, 4vw, 35px);
+  line-height: 1.2;
+  font-weight: 750;
+  letter-spacing: -1px;
+}
+
+.alterar-horario-cabecalho p {
+  max-width: 490px;
+  margin: 0;
+
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+/* =========================================
+   FORMULÁRIO
+   ========================================= */
+
+.alterar-horario-form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+/* =========================================
+   INFORMAÇÕES DO ALUNO
+   ========================================= */
+
+.informacao-aluno {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  margin-bottom: 20px;
+  padding: 20px 22px 20px 25px;
+
+  background: linear-gradient(
+    135deg,
+    #eff6ff,
+    #f8fbff
+  );
+
+  border: 1px solid #dbeafe;
+  border-radius: 16px;
+}
+
+.informacao-aluno::before {
+  content: "";
+
+  position: absolute;
+  top: 15px;
+  bottom: 15px;
+  left: 0;
+
+  width: 4px;
+  border-radius: 0 5px 5px 0;
+
+  background: #2563eb;
+}
+
+.informacao-aluno strong {
+  color: #1e3a8a;
+  font-size: 15px;
+}
+
+.informacao-aluno p,
+.informacao-aluno span {
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* =========================================
+   LABELS
+   ========================================= */
+
+.alterar-horario-form label {
+  display: block;
+  margin: 12px 0 3px;
+
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15px;
+}
+
+/* =========================================
+   CAMPOS
+   ========================================= */
+
+.alterar-horario-form input {
+  display: block;
+
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 15px;
+
+  box-sizing: border-box;
+
+  color: #0f172a;
+  background: #f8fafc;
+
+  border: 1px solid #dbe3ee;
+  border-radius: 12px;
+
+  font: inherit;
+  font-size: 15px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.alterar-horario-form input::placeholder {
+  color: #94a3b8;
+}
+
+.alterar-horario-form input:hover {
+  border-color: #b6c6dc;
+  background: #ffffff;
+}
+
+.alterar-horario-form input:focus {
+  border-color: #3b82f6;
+  background: #ffffff;
+
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.13);
+}
+
+.alterar-horario-form input:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  background: #f1f5f9;
+}
+
+/* =========================================
+   ÁREA DOS BOTÕES
+   ========================================= */
+
+.alterar-horario-acoes {
+  display: flex;
+  gap: 13px;
+
+  margin-top: 26px;
+  padding-top: 8px;
+}
+
+/* Estilo compartilhado */
+
+.alterar-horario-acoes button,
+.horario-nao-encontrado button {
+  min-height: 51px;
+  padding: 13px 22px;
+
+  border: 1px solid transparent;
+  border-radius: 12px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.alterar-horario-acoes button:active,
+.horario-nao-encontrado button:active {
+  transform: scale(0.98);
+}
+
+/* Botão principal */
+
+.alterar-horario-acoes button:first-child {
+  flex: 1;
+
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+
+  box-shadow: 0 7px 17px rgba(37, 99, 235, 0.2);
+}
+
+.alterar-horario-acoes button:first-child:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Botão secundário */
+
+.alterar-horario-acoes button:last-child {
+  color: #475569;
+  background: #ffffff;
+  border-color: #dbe3ee;
+}
+
+.alterar-horario-acoes button:last-child:hover {
+  color: #0f172a;
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+}
+
+/* Botões desativados */
+
+.alterar-horario-acoes button:disabled,
+.horario-nao-encontrado button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+/* =========================================
+   AVISO: HORÁRIO NÃO ENCONTRADO
+   ========================================= */
+
+.horario-nao-encontrado {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  margin-top: 22px;
+  padding: 23px;
+
+  color: #9a3412;
+  background: #fff7ed;
+
+  border: 1px solid #fed7aa;
+  border-radius: 16px;
+}
+
+.horario-nao-encontrado strong {
+  font-size: 15px;
+}
+
+.horario-nao-encontrado p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.horario-nao-encontrado button {
+  width: 100%;
+
+  color: #9a3412;
+  background: #ffffff;
+  border-color: #fdba74;
+}
+
+.horario-nao-encontrado button:hover {
+  background: #ffedd5;
+  border-color: #fb923c;
+}
+
+/* =========================================
+   ACESSIBILIDADE
+   ========================================= */
+
+.alterar-horario-acoes button:focus-visible,
+.horario-nao-encontrado button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 3px;
+}
+
+/* =========================================
+   ANIMAÇÃO SUAVE
+   ========================================= */
+
+@keyframes aparecerHorario {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Respeita quem prefere menos animações */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 700px) {
+  .alterar-horario {
+    padding: 35px 16px;
+    align-items: flex-start;
+  }
+
+  .alterar-horario-container {
+    padding: 34px 28px;
+    border-radius: 21px;
+  }
+
+  .alterar-horario-cabecalho {
+    margin-bottom: 25px;
+  }
+}
+
+/* =========================================
+   CELULAR
+   ========================================= */
+
+@media (max-width: 480px) {
+  .alterar-horario {
+    padding: 20px 12px;
+  }
+
+  .alterar-horario-container {
+    padding: 29px 19px;
+    border-radius: 18px;
+  }
+
+  .alterar-horario-cabecalho h1 {
+    letter-spacing: -0.6px;
+  }
+
+  .alterar-horario-cabecalho p {
+    font-size: 14px;
+  }
+
+  .alterar-horario-form input {
+    min-height: 49px;
+    font-size: 16px;
+  }
+
+  .alterar-horario-acoes {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .alterar-horario-acoes button {
+    width: 100%;
+    min-height: 49px;
+  }
+
+  .informacao-aluno {
+    padding: 17px 17px 17px 21px;
+  }
+
+  .horario-nao-encontrado {
+    padding: 19px;
+  }
+}

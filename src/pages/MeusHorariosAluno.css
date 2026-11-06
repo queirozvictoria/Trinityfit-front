@@ -1,0 +1,255 @@
+.meus-horarios-aluno {
+  min-height: 100vh;
+  padding: 32px 20px;
+  background: #faf8fc;
+  color: #432080;
+  box-sizing: border-box;
+}
+
+.horarios-aluno-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.horarios-aluno-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.horarios-aluno-cabecalho h1 {
+  margin: 0;
+  color: #432080;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.horarios-aluno-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 20px;
+}
+
+.horario-aluno-card {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  padding: 22px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e9ddf4;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(67, 32, 128, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.horario-aluno-card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: #af0bd8;
+}
+
+.horario-aluno-card:hover {
+  transform: translateY(-3px);
+  border-color: #b576f4;
+  box-shadow: 0 8px 22px rgba(67, 32, 128, 0.13);
+}
+
+.horario-aluno-card h2 {
+  margin: 0 0 14px;
+  color: #432080;
+  font-size: 1.2rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.horario-aluno-card p {
+  margin: 8px 0;
+  color: #76658a;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.horario-aluno-card strong {
+  color: #432080;
+  font-weight: 600;
+}
+
+.horario-marcado {
+  border-color: #b576f4;
+  background: linear-gradient(145deg, #fff 0%, #faf5ff 100%);
+}
+
+.status-marcado,
+.status-disponivel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  margin-top: 12px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.status-marcado {
+  color: #432080;
+  background: #ead8ff;
+  border: 1px solid #d7b8ff;
+}
+
+.status-disponivel {
+  color: #6f1591;
+  background: #f5e5fc;
+  border: 1px solid #e8c7f7;
+}
+
+.sem-horarios-aluno {
+  padding: 36px 22px;
+  text-align: center;
+  color: #76658a;
+  background: #fff;
+  border: 1px dashed #cbb2e5;
+  border-radius: 16px;
+}
+
+.sem-horarios-aluno p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.horarios-aluno-voltar {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 28px;
+}
+
+.botao-voltar-horarios-aluno {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 11px 20px;
+  color: #fff;
+  background: #432080;
+  border: 2px solid #432080;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.botao-voltar-horarios-aluno:hover {
+  background: #af0bd8;
+  border-color: #af0bd8;
+  box-shadow: 0 4px 12px rgba(175, 11, 216, 0.2);
+  transform: translateY(-1px);
+}
+
+.botao-voltar-horarios-aluno:focus-visible {
+  outline: 3px solid #b576f4;
+  outline-offset: 4px;
+}
+
+.botao-voltar-horarios-aluno:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 700px) {
+  .meus-horarios-aluno {
+    padding: 24px 16px;
+  }
+
+  .horarios-aluno-cabecalho {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-bottom: 22px;
+  }
+
+  .horarios-aluno-cabecalho h1 {
+    font-size: 1.7rem;
+  }
+
+  .horarios-aluno-lista {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .horario-aluno-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .meus-horarios-aluno {
+    padding: 20px 12px;
+  }
+
+  .horarios-aluno-cabecalho h1 {
+    font-size: 1.45rem;
+  }
+
+  .horario-aluno-card {
+    padding: 18px 16px;
+    border-radius: 12px;
+  }
+
+  .horario-aluno-card h2 {
+    font-size: 1.1rem;
+  }
+
+  .horario-aluno-card p {
+    font-size: 0.9rem;
+  }
+
+  .sem-horarios-aluno {
+    padding: 28px 16px;
+  }
+
+  .horarios-aluno-voltar {
+    margin-top: 22px;
+  }
+
+  .botao-voltar-horarios-aluno {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .horario-aluno-card,
+  .botao-voltar-horarios-aluno {
+    transition: none;
+  }
+
+  .horario-aluno-card:hover,
+  .botao-voltar-horarios-aluno:hover {
+    transform: none;
+  }
+}

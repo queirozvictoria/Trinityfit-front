@@ -1,0 +1,96 @@
+/* =========================================================
+   CARD DO ALUNO
+========================================================= */
+
+.aluno-card {
+  position: relative;
+  min-width: 0;
+  min-height: 190px;
+  padding: 26px;
+  overflow: hidden;
+
+  border: 1px solid #e1d5e8;
+  border-radius: 18px;
+
+  background: linear-gradient(145deg, #ffffff 0%, #fdfaff 100%);
+  color: #432080;
+
+  box-shadow:
+    0 5px 15px rgba(67, 32, 128, 0.05),
+    0 15px 30px rgba(67, 32, 128, 0.05);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* =========================================================
+   DETALHE DECORATIVO
+========================================================= */
+
+.aluno-card::after {
+  content: "";
+  position: absolute;
+  top: -45px;
+  right: -45px;
+
+  width: 120px;
+  height: 120px;
+
+  border-radius: 50%;
+  background-color: rgba(181, 118, 244, 0.08);
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   HOVER E CLIQUE
+========================================================= */
+
+.aluno-card:hover {
+  transform: translateY(-5px);
+  border-color: #b576f4;
+
+  box-shadow:
+    0 10px 22px rgba(67, 32, 128, 0.08),
+    0 18px 35px rgba(67, 32, 128, 0.10);
+}
+
+.aluno-card:active {
+  transform: translateY(-2px);
+}
+
+/* =========================================================
+   CASO O CARD SEJA UM BUTTON
+========================================================= */
+
+button.aluno-card {
+  display: block;
+  width: 100%;
+
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+  color: inherit;
+
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.aluno-card:focus-visible {
+  outline: 3px solid rgba(175, 11, 216, 0.35);
+  outline-offset: 4px;
+}
+
+/* =========================================================
+   INDICADOR LATERAL
+========================================================= */
+
+.aluno-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;}

@@ -1,0 +1,482 @@
+
+/* ==============================
+   RESET
+============================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #faf8fc;
+  color: #432080;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+/* ==============================
+   Página
+============================== */
+
+.planilha-aluno {
+  min-height: 100vh;
+  padding: 50px 25px;
+
+  background:
+    radial-gradient(
+      circle at top center,
+      rgba(181, 118, 244, 0.1),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(175, 11, 216, 0.04),
+      transparent 30%
+    ),
+    #faf8fc;
+}
+
+/* ==============================
+   Container
+============================== */
+
+.planilha-aluno-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ==============================
+   Cabeçalho
+============================== */
+
+.planilha-aluno-cabecalho {
+  margin-bottom: 35px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #e8dff0;
+  text-align: center;
+}
+
+.planilha-aluno-cabecalho h1 {
+  margin: 0 0 10px;
+  color: #432080;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+
+.planilha-aluno-cabecalho h1::after {
+  content: "";
+  display: block;
+  width: 58px;
+  height: 4px;
+  margin: 15px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #432080, #af0bd8);
+}
+
+.planilha-aluno-cabecalho p {
+  max-width: 650px;
+  margin: 15px auto 0;
+  color: #76658a;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+/* ==============================
+   Título da semana
+============================== */
+
+.planilha-semana {
+  position: relative;
+  margin-bottom: 25px;
+  padding: 18px 20px;
+  overflow: hidden;
+
+  background: linear-gradient(145deg, #ffffff, #fdfaff);
+  border: 1px solid #dfd0e8;
+  border-radius: 14px;
+
+  color: #432080;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+
+  box-shadow:
+    0 5px 15px rgba(67, 32, 128, 0.05),
+    0 10px 25px rgba(67, 32, 128, 0.04);
+}
+
+.planilha-semana::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+
+  background: linear-gradient(
+    90deg,
+    #432080,
+    #af0bd8,
+    #b576f4
+  );
+}
+
+/* ==============================
+   Card do treino
+============================== */
+
+.treino-card {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  margin-bottom: 22px;
+  padding: 28px;
+  overflow: hidden;
+
+  background: linear-gradient(145deg, #ffffff, #fdfaff);
+  border: 1px solid #e1d5e8;
+  border-radius: 18px;
+
+  box-shadow:
+    0 5px 15px rgba(67, 32, 128, 0.05),
+    0 15px 30px rgba(67, 32, 128, 0.05);
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.treino-card::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -45px;
+  right: -45px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: rgba(181, 118, 244, 0.08);
+  pointer-events: none;
+}
+
+.treino-card:hover {
+  transform: translateY(-4px);
+  border-color: #b576f4;
+
+  box-shadow:
+    0 10px 22px rgba(67, 32, 128, 0.08),
+    0 18px 35px rgba(67, 32, 128, 0.1);
+}
+
+/* Detalhe lateral */
+
+.treino-card::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  border-radius: 18px 0 0 18px;
+
+  background: linear-gradient(
+    180deg,
+    #432080,
+    #af0bd8,
+    #b576f4
+  );
+
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.treino-card:hover::before {
+  opacity: 1;
+}
+
+/* ==============================
+   Dia do treino
+============================== */
+
+.treino-dia {
+  position: relative;
+  z-index: 2;
+  margin: 0 0 6px;
+
+  color: #950995;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ==============================
+   Nome do treino
+============================== */
+
+.nome-treino {
+  position: relative;
+  z-index: 2;
+  margin: 0 0 22px;
+
+  color: #432080;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+/* ==============================
+   Exercícios
+============================== */
+
+.exercicio {
+  position: relative;
+  z-index: 2;
+  padding: 18px 0;
+  border-top: 1px solid #eee5f2;
+}
+
+.exercicio:first-of-type {
+  padding-top: 0;
+  border-top: none;
+}
+
+.exercicio:last-child {
+  padding-bottom: 0;
+}
+
+.exercicio h3 {
+  margin: 0 0 10px;
+  color: #432080;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+/* ==============================
+   Informações do exercício
+============================== */
+
+.informacoes-exercicio {
+  margin: 5px 0;
+  color: #76658a;
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.informacoes-exercicio strong {
+  color: #5c4a70;
+  font-weight: 700;
+}
+
+/* ==============================
+   Observação
+============================== */
+
+.observacao {
+  margin-top: 10px;
+  padding: 12px 14px;
+
+  background-color: #fbf3fd;
+  border: 1px solid #ead8f0;
+  border-radius: 9px;
+
+  color: #7c167f;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.observacao strong {
+  color: #432080;
+  font-weight: 700;
+}
+
+/* ==============================
+   Mensagem somente leitura
+============================== */
+
+.somente-leitura {
+  margin-top: 28px;
+  padding: 16px 20px;
+
+  background-color: #f5eff8;
+  border: 1px solid #e8dff0;
+  border-radius: 12px;
+
+  color: #76658a;
+  font-size: 13px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* ==============================
+   Responsivo — Tablet
+============================== */
+
+@media (max-width: 700px) {
+  .planilha-aluno {
+    padding: 40px 20px;
+  }
+
+  .planilha-aluno-cabecalho {
+    margin-bottom: 30px;
+    padding-bottom: 22px;
+  }
+
+  .planilha-aluno-cabecalho h1 {
+    font-size: 30px;
+  }
+
+  .planilha-aluno-cabecalho p {
+    font-size: 16px;
+  }
+
+  .planilha-semana {
+    margin-bottom: 20px;
+  }
+
+  .treino-card {
+    padding: 24px;
+    border-radius: 16px;
+  }
+
+  .treino-card::before {
+    border-radius: 16px 0 0 16px;
+  }
+
+  .nome-treino {
+    font-size: 22px;
+  }
+
+  .exercicio h3 {
+    font-size: 17px;
+  }
+
+  .informacoes-exercicio {
+    font-size: 14px;
+  }
+}
+
+/* ==============================
+   Responsivo — Celular
+============================== */
+
+@media (max-width: 480px) {
+  .planilha-aluno {
+    padding: 30px 15px;
+  }
+
+  .planilha-aluno-cabecalho {
+    margin-bottom: 25px;
+  }
+
+  .planilha-aluno-cabecalho h1 {
+    font-size: 27px;
+  }
+
+  .planilha-aluno-cabecalho p {
+    font-size: 15px;
+  }
+
+  .planilha-semana {
+    padding: 14px 15px;
+    border-radius: 12px;
+    font-size: 14px;
+  }
+
+  .treino-card {
+    margin-bottom: 17px;
+    padding: 21px;
+    border-radius: 15px;
+  }
+
+  .treino-card::before {
+    border-radius: 15px 0 0 15px;
+  }
+
+  .treino-dia {
+    font-size: 12px;
+  }
+
+  .nome-treino {
+    margin-bottom: 18px;
+    font-size: 20px;
+  }
+
+  .exercicio {
+    padding: 15px 0;
+  }
+
+  .exercicio h3 {
+    font-size: 16px;
+  }
+
+  .informacoes-exercicio {
+    font-size: 14px;
+  }
+
+  .observacao {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .somente-leitura {
+    padding: 13px 15px;
+    font-size: 12px;
+  }
+}
+
+/* ==============================
+   Acessibilidade
+============================== */
+
+@media (hover: none) {
+  .treino-card:hover {
+    transform: none;
+  }
+
+  .treino-card:hover::before {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .treino-card,
+  .treino-card::before {
+    transition: none;
+  }
+
+  .treino-card:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,397 @@
+:root {
+  --roxo: #432080;
+  --roxo-hover: #351666;
+  --rosa: #af0bd8;
+  --lilas: #b576f4;
+  --fundo: #faf8fc;
+  --branco: #ffffff;
+  --texto: #432080;
+  --texto-secundario: #76658a;
+  --borda: #e7dced;
+  --vermelho: #c6285a;
+  --vermelho-hover: #a91f4b;
+  --vermelho-fundo: #fff5f8;
+  --vermelho-borda: #f3c7d5;
+  --sombra: 0 12px 35px rgba(67, 32, 128, 0.08);
+  --transicao: 0.25s ease;
+}
+
+.cancelar-horario,
+.cancelar-horario * {
+  box-sizing: border-box;
+}
+
+.cancelar-horario {
+  min-height: 100vh;
+  width: 100%;
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:
+    radial-gradient(circle at 10% 5%, rgba(175, 11, 216, 0.09), transparent 30%),
+    radial-gradient(circle at 90% 95%, rgba(181, 118, 244, 0.12), transparent 32%),
+    var(--fundo);
+  color: var(--texto);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.cancelar-horario-container {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 42px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid var(--borda);
+  border-radius: 26px;
+  box-shadow: var(--sombra);
+}
+
+.cancelar-horario-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, var(--roxo), var(--rosa), var(--lilas));
+}
+
+.cancelar-horario-cabecalho {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.cancelar-horario-etiqueta {
+  display: inline-block;
+  margin-bottom: 15px;
+  padding: 8px 13px;
+  border-radius: 30px;
+  background: #f3eafa;
+  color: var(--roxo);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+}
+
+.cancelar-horario-cabecalho h1 {
+  margin: 0;
+  color: var(--roxo);
+  font-size: clamp(27px, 5vw, 35px);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.8px;
+}
+
+.cancelar-horario-cabecalho h1::after {
+  content: "";
+  display: block;
+  width: 55px;
+  height: 4px;
+  margin: 16px auto 0;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--roxo), var(--rosa));
+}
+
+.cancelar-horario-cabecalho p {
+  max-width: 520px;
+  margin: 17px auto 0;
+  color: var(--texto-secundario);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.cancelar-horario-card {
+  padding: 28px;
+  border: 1px solid var(--borda);
+  border-radius: 20px;
+  background: linear-gradient(145deg, #fff, #fdfaff);
+  box-shadow: 0 5px 18px rgba(67, 32, 128, 0.04);
+}
+
+.cancelar-horario-card-topo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.cancelar-horario-icone {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 17px;
+  background: linear-gradient(135deg, #f1e5ff, #e5d2ff);
+  color: var(--roxo);
+  font-size: 32px;
+}
+
+.cancelar-horario-subtitulo {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--rosa);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.cancelar-horario-card h2 {
+  margin: 0;
+  color: var(--roxo);
+  font-size: 21px;
+  line-height: 1.4;
+}
+
+.cancelar-horario-detalhes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.cancelar-horario-detalhe {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid #eee6f5;
+  border-radius: 13px;
+  background: #fff;
+}
+
+.cancelar-horario-detalhe span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--texto-secundario);
+  font-size: 12px;
+}
+
+.cancelar-horario-detalhe strong {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--roxo);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.cancelar-horario-detalhe .cancelar-horario-status {
+  color: #6b3299;
+}
+
+.mensagem-cancelamento {
+  position: relative;
+  margin-top: 24px;
+  padding: 18px 18px 18px 21px;
+  border: 1px solid var(--vermelho-borda);
+  border-radius: 13px;
+  background: var(--vermelho-fundo);
+  color: #9f2850;
+  line-height: 1.7;
+}
+
+.mensagem-cancelamento::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 0;
+  width: 3px;
+  border-radius: 8px;
+  background: var(--vermelho);
+}
+
+.mensagem-cancelamento strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.mensagem-cancelamento p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.cancelar-horario-mensagem {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 11px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cancelar-horario-mensagem.erro {
+  border: 1px solid var(--vermelho-borda);
+  background: var(--vermelho-fundo);
+  color: #9f2850;
+}
+
+.cancelar-horario-mensagem.sucesso {
+  border: 1px solid #b7e4c7;
+  background: #f0fff4;
+  color: #216e3a;
+}
+
+.cancelar-horario-acoes {
+  display: flex;
+  gap: 13px;
+  margin-top: 25px;
+}
+
+.cancelar-horario-acoes button,
+.cancelar-horario-card > button {
+  min-height: 50px;
+  padding: 13px 20px;
+  border-radius: 11px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  transition:
+    transform var(--transicao),
+    box-shadow var(--transicao),
+    background-color var(--transicao);
+}
+
+.botao-voltar {
+  flex: 1;
+  border: 1px solid #e3d7eb;
+  background: #f5eff9;
+  color: var(--roxo);
+}
+
+.botao-voltar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #ebe1f1;
+}
+
+.botao-confirmar-cancelamento {
+  flex: 1.4;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, var(--vermelho), var(--vermelho-hover));
+  box-shadow: 0 7px 17px rgba(198, 40, 90, 0.18);
+  color: #fff;
+}
+
+.botao-confirmar-cancelamento:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 11px 24px rgba(198, 40, 90, 0.25);
+}
+
+.cancelar-horario-acoes button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.cancelar-horario-acoes button:focus-visible,
+.cancelar-horario-card > button:focus-visible {
+  outline: 3px solid rgba(175, 11, 216, 0.3);
+  outline-offset: 3px;
+}
+
+.cancelar-horario-card > button {
+  width: 100%;
+  margin-top: 12px;
+  border: 1px solid #e3d7eb;
+  background: #f5eff9;
+  color: var(--roxo);
+}
+
+.cancelar-horario-card > button:hover {
+  background: #ebe1f1;
+}
+
+@media (max-width: 700px) {
+  .cancelar-horario {
+    align-items: flex-start;
+    padding: 38px 16px;
+  }
+
+  .cancelar-horario-container {
+    padding: 32px 25px;
+    border-radius: 22px;
+  }
+
+  .cancelar-horario-card {
+    padding: 23px;
+  }
+}
+
+@media (max-width: 500px) {
+  .cancelar-horario {
+    padding: 24px 12px;
+  }
+
+  .cancelar-horario-container {
+    padding: 29px 17px;
+    border-radius: 19px;
+  }
+
+  .cancelar-horario-cabecalho {
+    margin-bottom: 25px;
+  }
+
+  .cancelar-horario-cabecalho p {
+    font-size: 14px;
+  }
+
+  .cancelar-horario-card {
+    padding: 19px;
+    border-radius: 16px;
+  }
+
+  .cancelar-horario-card-topo {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .cancelar-horario-icone {
+    width: 47px;
+    height: 47px;
+    border-radius: 13px;
+    font-size: 27px;
+  }
+
+  .cancelar-horario-card h2 {
+    font-size: 18px;
+  }
+
+  .cancelar-horario-detalhes {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .cancelar-horario-detalhe {
+    padding: 14px;
+  }
+
+  .cancelar-horario-acoes {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cancelar-horario-acoes button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 350px) {
+  .cancelar-horario-container {
+    padding: 25px 13px;
+  }
+
+  .cancelar-horario-card {
+    padding: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cancelar-horario *,
+  .cancelar-horario *::before,
+  .cancelar-horario *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
