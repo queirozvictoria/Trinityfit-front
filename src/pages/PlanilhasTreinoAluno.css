@@ -34,7 +34,6 @@ select {
 .planilha-aluno {
   min-height: 100vh;
   padding: 50px 25px;
-
   background:
     radial-gradient(
       circle at top center,
@@ -107,17 +106,14 @@ select {
   margin-bottom: 25px;
   padding: 18px 20px;
   overflow: hidden;
-
   background: linear-gradient(145deg, #ffffff, #fdfaff);
   border: 1px solid #dfd0e8;
   border-radius: 14px;
-
   color: #432080;
   font-size: 16px;
   font-weight: 700;
   line-height: 1.5;
   text-align: center;
-
   box-shadow:
     0 5px 15px rgba(67, 32, 128, 0.05),
     0 10px 25px rgba(67, 32, 128, 0.04);
@@ -130,13 +126,20 @@ select {
   left: 0;
   width: 100%;
   height: 4px;
-
   background: linear-gradient(
     90deg,
     #432080,
     #af0bd8,
     #b576f4
   );
+}
+
+/* ==============================
+   Lista de planilhas
+============================== */
+
+.lista-planilhas-conteudo {
+  width: 100%;
 }
 
 /* ==============================
@@ -150,15 +153,12 @@ select {
   margin-bottom: 22px;
   padding: 28px;
   overflow: hidden;
-
   background: linear-gradient(145deg, #ffffff, #fdfaff);
   border: 1px solid #e1d5e8;
   border-radius: 18px;
-
   box-shadow:
     0 5px 15px rgba(67, 32, 128, 0.05),
     0 15px 30px rgba(67, 32, 128, 0.05);
-
   transition:
     transform 0.25s ease,
     border-color 0.25s ease,
@@ -181,13 +181,10 @@ select {
 .treino-card:hover {
   transform: translateY(-4px);
   border-color: #b576f4;
-
   box-shadow:
     0 10px 22px rgba(67, 32, 128, 0.08),
     0 18px 35px rgba(67, 32, 128, 0.1);
 }
-
-/* Detalhe lateral */
 
 .treino-card::before {
   content: "";
@@ -198,14 +195,12 @@ select {
   width: 5px;
   height: 100%;
   border-radius: 18px 0 0 18px;
-
   background: linear-gradient(
     180deg,
     #432080,
     #af0bd8,
     #b576f4
   );
-
   opacity: 0;
   transition: opacity 0.25s ease;
   pointer-events: none;
@@ -223,7 +218,6 @@ select {
   position: relative;
   z-index: 2;
   margin: 0 0 6px;
-
   color: #950995;
   font-size: 13px;
   font-weight: 700;
@@ -240,7 +234,6 @@ select {
   position: relative;
   z-index: 2;
   margin: 0 0 22px;
-
   color: #432080;
   font-size: 25px;
   font-weight: 700;
@@ -249,7 +242,7 @@ select {
 }
 
 /* ==============================
-   Exercícios
+   Exercícios e descrição
 ============================== */
 
 .exercicio {
@@ -301,11 +294,9 @@ select {
 .observacao {
   margin-top: 10px;
   padding: 12px 14px;
-
   background-color: #fbf3fd;
   border: 1px solid #ead8f0;
   border-radius: 9px;
-
   color: #7c167f;
   font-size: 13px;
   line-height: 1.7;
@@ -318,17 +309,90 @@ select {
 }
 
 /* ==============================
+   Mensagem de erro
+============================== */
+
+.mensagem-erro {
+  margin: 20px 0;
+  padding: 18px 20px;
+  background: #fff1f1;
+  border: 1px solid #f0caca;
+  border-left: 5px solid #d93030;
+  border-radius: 12px;
+  color: #a32222;
+  text-align: center;
+}
+
+.mensagem-erro p {
+  margin: 0 0 15px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.mensagem-erro button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #8b24a5;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.mensagem-erro button:hover:not(:disabled) {
+  background: #681780;
+}
+
+.mensagem-erro button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mensagem-erro button:focus-visible {
+  outline: 3px solid #b576f4;
+  outline-offset: 3px;
+}
+
+/* ==============================
+   Carregamento
+============================== */
+
+.mensagem-carregando {
+  margin: 30px 0;
+  padding: 20px;
+  color: #76658a;
+  font-size: 15px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* ==============================
+   Lista vazia
+============================== */
+
+.lista-vazia {
+  margin: 20px 0;
+  padding: 25px 20px;
+  background: #ffffff;
+  border: 1px dashed #cdb9dc;
+  border-radius: 14px;
+  color: #76658a;
+  font-size: 15px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* ==============================
    Mensagem somente leitura
 ============================== */
 
 .somente-leitura {
   margin-top: 28px;
   padding: 16px 20px;
-
   background-color: #f5eff8;
   border: 1px solid #e8dff0;
   border-radius: 12px;
-
   color: #76658a;
   font-size: 13px;
   line-height: 1.7;
@@ -449,6 +513,15 @@ select {
   .somente-leitura {
     padding: 13px 15px;
     font-size: 12px;
+  }
+
+  .mensagem-erro {
+    padding: 15px;
+  }
+
+  .lista-vazia {
+    padding: 20px 15px;
+    font-size: 14px;
   }
 }
 

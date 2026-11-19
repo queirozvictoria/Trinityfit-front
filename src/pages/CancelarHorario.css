@@ -1,20 +1,24 @@
+/* =====================================================
+   VARIÁVEIS EXCLUSIVAS DESTA TELA
+   (as demais ficam dentro de .cancelar-horario, para não
+   interferir em outras telas)
+   ===================================================== */
+
 :root {
-  --roxo: #432080;
-  --roxo-hover: #351666;
-  --rosa: #af0bd8;
-  --lilas: #b576f4;
-  --fundo: #faf8fc;
-  --branco: #ffffff;
-  --texto: #432080;
-  --texto-secundario: #76658a;
-  --borda: #e7dced;
-  --vermelho: #c6285a;
-  --vermelho-hover: #a91f4b;
-  --vermelho-fundo: #fff5f8;
-  --vermelho-borda: #f3c7d5;
-  --sombra: 0 12px 35px rgba(67, 32, 128, 0.08);
-  --transicao: 0.25s ease;
+  --roxo-hover: #3b0764;
+
+  --vermelho: #e0245e;
+  --vermelho-hover: #be1a4d;
+  --vermelho-fundo: #fff4f6;
+  --vermelho-borda: #f6cdd7;
+
+  --sombra: 0 24px 60px rgba(76, 29, 149, 0.12);
+  --transicao: 0.2s ease;
 }
+
+/* =====================================================
+   CONFIGURAÇÃO GERAL
+   ===================================================== */
 
 .cancelar-horario,
 .cancelar-horario * {
@@ -22,101 +26,162 @@
 }
 
 .cancelar-horario {
+  --roxo: #4c1d95;
+  --roxo-medio: #6d28d9;
+  --roxo-claro: #7c3aed;
+  --texto: #1e1b2e;
+  --texto-secundario: #6b6880;
+  --cor-label: #3b3552;
+  --borda: #e7e3f0;
+  --raio: 14px;
+  --gradiente: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+
+  position: relative;
   min-height: 100vh;
   width: 100%;
-  padding: 60px 20px;
+  padding: clamp(24px, 6vw, 60px) clamp(12px, 3vw, 20px);
   display: flex;
   justify-content: center;
   align-items: center;
-  background:
-    radial-gradient(circle at 10% 5%, rgba(175, 11, 216, 0.09), transparent 30%),
-    radial-gradient(circle at 90% 95%, rgba(181, 118, 244, 0.12), transparent 32%),
-    var(--fundo);
+  overflow: hidden;
+
   color: var(--texto);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #f6f3fc;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-.cancelar-horario-container {
-  position: relative;
-  width: 100%;
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 42px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1px solid var(--borda);
-  border-radius: 26px;
-  box-shadow: var(--sombra);
+/* Manchas de luz ao fundo */
+.cancelar-horario::before,
+.cancelar-horario::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
 }
 
+.cancelar-horario::before {
+  top: -140px;
+  left: -120px;
+  background: rgba(139, 92, 246, 0.28);
+}
+
+.cancelar-horario::after {
+  right: -140px;
+  bottom: -160px;
+  background: rgba(244, 114, 182, 0.18);
+}
+
+/* =====================================================
+   CONTAINER PRINCIPAL
+   ===================================================== */
+
+.cancelar-horario-container {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: clamp(26px, 5vw, 42px);
+
+  background: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(231, 227, 240, 0.9);
+  border-radius: 24px;
+  box-shadow: var(--sombra);
+
+  animation: aparecerCancelar 0.45s ease both;
+}
+
+/* Faixa de cor no topo */
 .cancelar-horario-container::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 5px;
-  background: linear-gradient(90deg, var(--roxo), var(--rosa), var(--lilas));
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, #6d28d9, #8b5cf6, #f472b6);
 }
 
+/* =====================================================
+   CABEÇALHO
+   ===================================================== */
+
 .cancelar-horario-cabecalho {
-  margin-bottom: 32px;
+  margin-bottom: 30px;
   text-align: center;
 }
 
 .cancelar-horario-etiqueta {
   display: inline-block;
-  margin-bottom: 15px;
-  padding: 8px 13px;
-  border-radius: 30px;
-  background: #f3eafa;
-  color: var(--roxo);
-  font-size: 11px;
+  margin-bottom: 14px;
+  padding: 7px 14px;
+
+  color: var(--roxo-medio);
+  background: #f3edff;
+  border: 1px solid #e6dafb;
+  border-radius: 999px;
+
+  font-size: 0.6875rem;
   font-weight: 800;
-  letter-spacing: 1.1px;
+  letter-spacing: 0.08em;
 }
 
 .cancelar-horario-cabecalho h1 {
   margin: 0;
-  color: var(--roxo);
-  font-size: clamp(27px, 5vw, 35px);
+  font-size: clamp(1.65rem, 5vw, 2.1rem);
   font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: -0.8px;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+
+  background: linear-gradient(135deg, #2e1065 0%, #6d28d9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--roxo); /* fallback */
 }
 
 .cancelar-horario-cabecalho h1::after {
   content: "";
   display: block;
-  width: 55px;
-  height: 4px;
+  width: 48px;
+  height: 5px;
   margin: 16px auto 0;
-  border-radius: 10px;
-  background: linear-gradient(90deg, var(--roxo), var(--rosa));
+  border-radius: 999px;
+  background: var(--gradiente);
 }
 
 .cancelar-horario-cabecalho p {
-  max-width: 520px;
-  margin: 17px auto 0;
+  max-width: 52ch;
+  margin: 16px auto 0;
   color: var(--texto-secundario);
-  font-size: 15px;
-  line-height: 1.8;
+  font-size: 0.95rem;
+  line-height: 1.7;
 }
 
+/* =====================================================
+   CARD DO HORÁRIO
+   ===================================================== */
+
 .cancelar-horario-card {
-  padding: 28px;
+  padding: clamp(20px, 4vw, 28px);
+
+  background: linear-gradient(145deg, #ffffff, #fbf9ff);
   border: 1px solid var(--borda);
   border-radius: 20px;
-  background: linear-gradient(145deg, #fff, #fdfaff);
-  box-shadow: 0 5px 18px rgba(67, 32, 128, 0.04);
+  box-shadow: 0 6px 20px rgba(76, 29, 149, 0.05);
 }
 
 .cancelar-horario-card-topo {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 26px;
+  margin-bottom: 24px;
 }
 
 .cancelar-horario-icone {
@@ -124,221 +189,269 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 58px;
-  height: 58px;
-  border-radius: 17px;
-  background: linear-gradient(135deg, #f1e5ff, #e5d2ff);
-  color: var(--roxo);
-  font-size: 32px;
+  width: 56px;
+  height: 56px;
+
+  color: var(--roxo-medio);
+  background: linear-gradient(135deg, #f0e8ff, #ddd0ff);
+  border-radius: 16px;
+  box-shadow: 0 6px 14px rgba(124, 58, 237, 0.15);
+
+  font-size: 30px;
 }
 
 .cancelar-horario-subtitulo {
   display: block;
-  margin-bottom: 6px;
-  color: var(--rosa);
-  font-size: 10px;
+  margin-bottom: 4px;
+  color: var(--roxo-claro);
+  font-size: 0.625rem;
   font-weight: 800;
-  letter-spacing: 1px;
+  letter-spacing: 0.1em;
 }
 
 .cancelar-horario-card h2 {
   margin: 0;
-  color: var(--roxo);
-  font-size: 21px;
-  line-height: 1.4;
+  color: var(--texto);
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
 }
+
+/* =====================================================
+   DETALHES DO HORÁRIO
+   ===================================================== */
 
 .cancelar-horario-detalhes {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 
 .cancelar-horario-detalhe {
   min-width: 0;
   padding: 16px;
-  border: 1px solid #eee6f5;
-  border-radius: 13px;
-  background: #fff;
+
+  background: #faf9fc;
+  border: 1px solid #ece8f4;
+  border-radius: var(--raio);
 }
 
 .cancelar-horario-detalhe span {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: var(--texto-secundario);
-  font-size: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .cancelar-horario-detalhe strong {
   display: block;
   overflow-wrap: anywhere;
-  color: var(--roxo);
-  font-size: 15px;
+  color: var(--texto);
+  font-size: 0.95rem;
+  font-weight: 700;
   line-height: 1.5;
 }
 
 .cancelar-horario-detalhe .cancelar-horario-status {
-  color: #6b3299;
+  color: var(--roxo-medio);
 }
+
+/* =====================================================
+   AVISO DE CANCELAMENTO
+   ===================================================== */
 
 .mensagem-cancelamento {
-  position: relative;
-  margin-top: 24px;
-  padding: 18px 18px 18px 21px;
-  border: 1px solid var(--vermelho-borda);
-  border-radius: 13px;
-  background: var(--vermelho-fundo);
-  color: #9f2850;
-  line-height: 1.7;
-}
+  margin-top: 22px;
+  padding: 16px 18px;
 
-.mensagem-cancelamento::before {
-  content: "";
-  position: absolute;
-  top: 12px;
-  bottom: 12px;
-  left: 0;
-  width: 3px;
-  border-radius: 8px;
-  background: var(--vermelho);
+  color: #9f1f46;
+  background: var(--vermelho-fundo);
+  border: 1px solid var(--vermelho-borda);
+  border-left: 4px solid var(--vermelho);
+  border-radius: var(--raio);
+
+  line-height: 1.7;
 }
 
 .mensagem-cancelamento strong {
   display: block;
   margin-bottom: 4px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .mensagem-cancelamento p {
   margin: 0;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
+
+/* =====================================================
+   MENSAGENS DE ERRO E SUCESSO
+   ===================================================== */
 
 .cancelar-horario-mensagem {
   margin-top: 18px;
   padding: 14px 16px;
-  border-radius: 11px;
-  font-size: 14px;
+
+  border-radius: var(--raio);
+  font-size: 0.875rem;
+  font-weight: 600;
   line-height: 1.6;
 }
 
 .cancelar-horario-mensagem.erro {
-  border: 1px solid var(--vermelho-borda);
+  color: #9f1f46;
   background: var(--vermelho-fundo);
-  color: #9f2850;
+  border: 1px solid var(--vermelho-borda);
+  border-left: 4px solid var(--vermelho);
 }
 
 .cancelar-horario-mensagem.sucesso {
-  border: 1px solid #b7e4c7;
-  background: #f0fff4;
-  color: #216e3a;
+  color: #1d6b3a;
+  background: #f1fbf4;
+  border: 1px solid #bfe6cc;
+  border-left: 4px solid #2fb860;
 }
+
+/* =====================================================
+   BOTÕES
+   ===================================================== */
 
 .cancelar-horario-acoes {
   display: flex;
-  gap: 13px;
-  margin-top: 25px;
+  gap: 12px;
+  margin-top: 24px;
 }
 
 .cancelar-horario-acoes button,
 .cancelar-horario-card > button {
   min-height: 50px;
-  padding: 13px 20px;
-  border-radius: 11px;
+  padding: 12px 20px;
+
+  border: 1.5px solid transparent;
+  border-radius: var(--raio);
   cursor: pointer;
+
   font-family: inherit;
-  font-size: 14px;
+  font-size: 0.9375rem;
   font-weight: 700;
+
   transition:
     transform var(--transicao),
     box-shadow var(--transicao),
-    background-color var(--transicao);
+    background-color var(--transicao),
+    border-color var(--transicao),
+    filter var(--transicao);
 }
 
-.botao-voltar {
+/* Voltar (secundário).
+   Prefixado com .cancelar-horario para não colidir com o
+   .botao-voltar da tela de cadastro. */
+.cancelar-horario .botao-voltar {
   flex: 1;
-  border: 1px solid #e3d7eb;
-  background: #f5eff9;
-  color: var(--roxo);
+  display: block;
+  width: auto;
+  margin-top: 0;
+
+  color: var(--cor-label);
+  background: #fff;
+  border: 1.5px solid var(--borda);
+  box-shadow: none;
 }
 
-.botao-voltar:hover:not(:disabled) {
-  transform: translateY(-2px);
-  background: #ebe1f1;
+.cancelar-horario .botao-voltar:hover:not(:disabled) {
+  background: #f6f2fd;
+  border-color: #d6c9f2;
 }
 
+/* Confirmar cancelamento (ação destrutiva) */
 .botao-confirmar-cancelamento {
   flex: 1.4;
-  border: 1px solid transparent;
-  background: linear-gradient(135deg, var(--vermelho), var(--vermelho-hover));
-  box-shadow: 0 7px 17px rgba(198, 40, 90, 0.18);
   color: #fff;
+  background: linear-gradient(135deg, var(--vermelho), var(--vermelho-hover));
+  box-shadow: 0 8px 20px rgba(224, 36, 94, 0.28);
 }
 
 .botao-confirmar-cancelamento:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 11px 24px rgba(198, 40, 90, 0.25);
+  box-shadow: 0 12px 26px rgba(224, 36, 94, 0.36);
+  filter: brightness(1.04);
 }
 
-.cancelar-horario-acoes button:disabled {
+.cancelar-horario-acoes button:active:not(:disabled),
+.cancelar-horario-card > button:active:not(:disabled) {
+  transform: translateY(0);
+  filter: none;
+}
+
+.cancelar-horario-acoes button:disabled,
+.cancelar-horario-card > button:disabled {
+  opacity: 0.55;
   cursor: not-allowed;
-  opacity: 0.65;
+  box-shadow: none;
 }
 
 .cancelar-horario-acoes button:focus-visible,
 .cancelar-horario-card > button:focus-visible {
-  outline: 3px solid rgba(175, 11, 216, 0.3);
+  outline: 3px solid rgba(124, 58, 237, 0.35);
   outline-offset: 3px;
 }
 
+/* Botão extra dentro do card */
 .cancelar-horario-card > button {
   width: 100%;
   margin-top: 12px;
-  border: 1px solid #e3d7eb;
-  background: #f5eff9;
-  color: var(--roxo);
+
+  color: var(--cor-label);
+  background: #fff;
+  border-color: var(--borda);
 }
 
-.cancelar-horario-card > button:hover {
-  background: #ebe1f1;
+.cancelar-horario-card > button:hover:not(:disabled) {
+  background: #f6f2fd;
+  border-color: #d6c9f2;
 }
+
+/* =====================================================
+   ANIMAÇÃO
+   ===================================================== */
+
+@keyframes aparecerCancelar {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cancelar-horario *,
+  .cancelar-horario-container {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* =====================================================
+   RESPONSIVO
+   ===================================================== */
 
 @media (max-width: 700px) {
   .cancelar-horario {
     align-items: flex-start;
-    padding: 38px 16px;
   }
 
   .cancelar-horario-container {
-    padding: 32px 25px;
-    border-radius: 22px;
-  }
-
-  .cancelar-horario-card {
-    padding: 23px;
+    border-radius: 20px;
   }
 }
 
 @media (max-width: 500px) {
-  .cancelar-horario {
-    padding: 24px 12px;
-  }
-
-  .cancelar-horario-container {
-    padding: 29px 17px;
-    border-radius: 19px;
-  }
-
-  .cancelar-horario-cabecalho {
-    margin-bottom: 25px;
-  }
-
-  .cancelar-horario-cabecalho p {
-    font-size: 14px;
-  }
-
   .cancelar-horario-card {
-    padding: 19px;
     border-radius: 16px;
   }
 
@@ -348,14 +461,14 @@
   }
 
   .cancelar-horario-icone {
-    width: 47px;
-    height: 47px;
+    width: 46px;
+    height: 46px;
     border-radius: 13px;
-    font-size: 27px;
+    font-size: 26px;
   }
 
   .cancelar-horario-card h2 {
-    font-size: 18px;
+    font-size: 1.1rem;
   }
 
   .cancelar-horario-detalhes {
@@ -368,30 +481,11 @@
   }
 
   .cancelar-horario-acoes {
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 10px;
   }
 
   .cancelar-horario-acoes button {
     width: 100%;
-  }
-}
-
-@media (max-width: 350px) {
-  .cancelar-horario-container {
-    padding: 25px 13px;
-  }
-
-  .cancelar-horario-card {
-    padding: 15px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cancelar-horario *,
-  .cancelar-horario *::before,
-  .cancelar-horario *::after {
-    scroll-behavior: auto !important;
-    transition: none !important;
   }
 }

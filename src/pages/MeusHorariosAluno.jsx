@@ -6,6 +6,26 @@ import "./MeusHorariosAluno.css";
 
 const API_URL = "http://localhost:3000";
 
+function obterUsuario() {
+  try {
+    return JSON.parse(localStorage.getItem("usuario") || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function obterCodigoAluno() {
+  const usuario = obterUsuario();
+
+  const codigo =
+    usuario.codigoAluno ??
+    usuario.codigoaluno ??
+    usuario.aluno?.codigoAluno ??
+    usuario.aluno?.codigoaluno;
+
+  return codigo ? Number(codigo) : null;
+}
+
 function formatarData(valor) {
   if (!valor) return "Data não informada";
 
@@ -39,42 +59,56 @@ async function lerJson(response) {
   try {
     return texto ? JSON.parse(texto) : {};
   } catch {
-    throw new Error("O servidor retornou uma resposta inválida.");
+    throw new Error(texto || "O servidor retornou uma resposta inválida.");
   }
 }
 
 export default function MeusHorariosAluno() {
   const navigate = useNavigate();
 
-  // Busca os dados do aluno que realizou o login.
-  const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
-  const codigoAluno = usuario?.codigoAluno;
+  const [codigoAluno] = useState(obterCodigoAluno);
+  const [token] = useState(() => localStorage.getItem("token"));
 
   const [agendamentos, setAgendamentos] = useState([]);
-  const [planos, setPlanos] = useState([]);
   const [carregando, setCarregando] = useState(true);
-  const [carregandoPlanos, setCarregandoPlanos] = useState(true);
   const [cancelandoId, setCancelandoId] = useState(null);
   const [erro, setErro] = useState("");
-  const [erroPlanos, setErroPlanos] = useState("");
   const [mensagem, setMensagem] = useState("");
 
   // BUSCAR HORÁRIOS DO ALUNO
-  // GET /agendamento/aluno/:codigoAluno
   const buscarAgendamentos = useCallback(async () => {
+    if (!token) {
+      setErro("Sessão não encontrada. Faça login novamente.");
+      setCarregando(false);
+      return;
+    }
+
+    if (!codigoAluno) {
+      setErro("Aluno não identificado. Faça login novamente.");
+      setCarregando(false);
+      return;
+    }
+
     try {
       setCarregando(true);
       setErro("");
 
       const response = await fetch(
-        `${API_URL}/agendamento/aluno/${codigoAluno}`
+        `${API_URL}/agendamento/aluno/${codigoAluno}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       const dados = await lerJson(response);
 
       if (!response.ok) {
         throw new Error(
-          dados.erro || "Não foi possível carregar seus horários."
+          dados.erro ||
+          dados.message ||
+          "Não foi possível carregar seus horários."
         );
       }
 
@@ -85,67 +119,18 @@ export default function MeusHorariosAluno() {
       setAgendamentos(dados);
     } catch (error) {
       console.error("Erro ao buscar horários do aluno:", error);
-
       setAgendamentos([]);
-      setErro(error.message || "Não foi possível carregar seus horários.");
+      setErro(error.message);
     } finally {
       setCarregando(false);
     }
-  }, [codigoAluno]);
-
-  // BUSCAR PLANILHAS DE TREINO DO ALUNO
-  // GET /plano-treino/aluno/:codigoAluno
-  const buscarPlanos = useCallback(async () => {
-    try {
-      setCarregandoPlanos(true);
-      setErroPlanos("");
-
-      const response = await fetch(
-        `${API_URL}/plano-treino/aluno/${codigoAluno}`
-      );
-
-      const dados = await lerJson(response);
-
-      if (!response.ok) {
-        throw new Error(
-          dados.erro || "Não foi possível carregar seu treino."
-        );
-      }
-
-      if (!Array.isArray(dados)) {
-        throw new Error("A resposta do servidor não é uma lista.");
-      }
-
-      setPlanos(dados);
-    } catch (error) {
-      console.error("Erro ao buscar planos do aluno:", error);
-
-      setPlanos([]);
-      setErroPlanos(error.message || "Não foi possível carregar seu treino.");
-    } finally {
-      setCarregandoPlanos(false);
-    }
-  }, [codigoAluno]);
-
-  const atualizarTudo = useCallback(() => {
-    buscarAgendamentos();
-    buscarPlanos();
-  }, [buscarAgendamentos, buscarPlanos]);
+  }, [codigoAluno, token]);
 
   useEffect(() => {
-    if (!codigoAluno) {
-      setErro("Aluno não identificado. Faça login novamente.");
-      setErroPlanos("Aluno não identificado. Faça login novamente.");
-      setCarregando(false);
-      setCarregandoPlanos(false);
-      return;
-    }
-
-    atualizarTudo();
-  }, [codigoAluno, atualizarTudo]);
+    buscarAgendamentos();
+  }, [buscarAgendamentos]);
 
   // DESMARCAR HORÁRIO
-  // PATCH /agendamento/:id/status
   async function desmarcar(agendamento) {
     const confirmou = window.confirm(
       `Desmarcar o horário de ${formatarData(
@@ -154,6 +139,11 @@ export default function MeusHorariosAluno() {
     );
 
     if (!confirmou) return;
+
+    if (!token) {
+      setErro("Sessão não encontrada. Faça login novamente.");
+      return;
+    }
 
     try {
       setCancelandoId(agendamento.codigoAgendamento);
@@ -164,8 +154,13 @@ export default function MeusHorariosAluno() {
         `${API_URL}/agendamento/${agendamento.codigoAgendamento}/status`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ statusAgendamento: "CANCELADO" }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            statusAgendamento: "CANCELADO",
+          }),
         }
       );
 
@@ -173,7 +168,9 @@ export default function MeusHorariosAluno() {
 
       if (!response.ok) {
         throw new Error(
-          dados.erro || "Não foi possível desmarcar o horário."
+          dados.erro ||
+          dados.message ||
+          "Não foi possível desmarcar o horário."
         );
       }
 
@@ -186,20 +183,13 @@ export default function MeusHorariosAluno() {
       );
 
       setMensagem("Horário desmarcado com sucesso.");
-      buscarPlanos();
     } catch (error) {
       console.error("Erro ao desmarcar horário:", error);
-
-      setErro(error.message || "Não foi possível desmarcar o horário.");
+      setErro(error.message);
     } finally {
       setCancelandoId(null);
     }
   }
-
-  // Planilhas de atendimentos que não foram cancelados
-  const planosAtivos = planos.filter(
-    (plano) => normalizarStatus(plano.statusAgendamento) !== "CANCELADO"
-  );
 
   return (
     <main className="mha">
@@ -208,8 +198,8 @@ export default function MeusHorariosAluno() {
           <div>
             <h1>Meus horários</h1>
             <p>
-              Consulte seus atendimentos, veja seu treino, agende novos
-              horários e desmarque, se precisar.
+              Consulte seus atendimentos, agende novos horários e desmarque,
+              se precisar.
             </p>
           </div>
 
@@ -225,10 +215,10 @@ export default function MeusHorariosAluno() {
             <button
               type="button"
               className="mha-btn-secundario"
-              onClick={atualizarTudo}
-              disabled={carregando || carregandoPlanos}
+              onClick={buscarAgendamentos}
+              disabled={carregando}
             >
-              {carregando || carregandoPlanos ? "Atualizando..." : "Atualizar"}
+              {carregando ? "Atualizando..." : "Atualizar"}
             </button>
           </div>
         </header>
@@ -285,7 +275,9 @@ export default function MeusHorariosAluno() {
                     </span>
                   </div>
 
-                  <span className={`mha-status mha-status-${status.toLowerCase()}`}>
+                  <span
+                    className={`mha-status mha-status-${status.toLowerCase()}`}
+                  >
                     {nomeStatus(status)}
                   </span>
 
@@ -302,58 +294,6 @@ export default function MeusHorariosAluno() {
                 </li>
               );
             })}
-          </ul>
-        )}
-
-        {/* ===================== MEU TREINO ===================== */}
-        <header className="mha-cabecalho" style={{ marginTop: "32px" }}>
-          <div>
-            <h1>Meu treino</h1>
-            <p>Planilha de treino montada pelo seu personal.</p>
-          </div>
-        </header>
-
-        {erroPlanos && (
-          <p className="mha-mensagem mha-erro" role="alert">
-            {erroPlanos}
-          </p>
-        )}
-
-        {carregandoPlanos && (
-          <p className="mha-vazio" role="status">
-            Carregando seu treino...
-          </p>
-        )}
-
-        {!carregandoPlanos && !erroPlanos && planosAtivos.length === 0 && (
-          <p className="mha-vazio">
-            Seu personal ainda não cadastrou uma planilha de treino para você.
-          </p>
-        )}
-
-        {!carregandoPlanos && planosAtivos.length > 0 && (
-          <ul className="mha-lista">
-            {planosAtivos.map((plano) => (
-              <li
-                key={plano.codigoPlanoTreino}
-                className="mha-card"
-                style={{ flexDirection: "column", alignItems: "stretch" }}
-              >
-                <div className="mha-card-info">
-                  <strong className="mha-data">
-                    Atendimento de {formatarData(plano.dataAgendamento)}
-                  </strong>
-
-                  <span className="mha-hora">
-                    {formatarHorario(plano.horarioAgendamento)}
-                  </span>
-                </div>
-
-                <p style={{ whiteSpace: "pre-wrap", margin: "8px 0 0" }}>
-                  {plano.descricaoPlanoTreino || "Sem descrição do treino."}
-                </p>
-              </li>
-            ))}
           </ul>
         )}
 

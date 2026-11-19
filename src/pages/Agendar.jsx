@@ -3,73 +3,129 @@ import { useNavigate } from "react-router-dom";
 
 import "./Agendar.css";
 
+const API_URL = "http://localhost:3000";
+
+/* =====================================================
+   HELPERS
+   ===================================================== */
+
+function obterCodigoPersonal() {
+  try {
+    const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+    const codigo = usuario?.codigoPersonal ?? usuario?.codigopersonal;
+    return codigo ? Number(codigo) : null;
+  } catch {
+    return null;
+  }
+}
+
+function obterHeaders() {
+  const token = localStorage.getItem("token");
+
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
+function mensagemErro(dados, padrao) {
+  return dados?.erro || dados?.detalhe || dados?.message || dados?.mensagem || padrao;
+}
+
+/** Faz a requisição, lê o JSON e lança Error com mensagem amigável se falhar. */
+async function requisitar(caminho, opcoes = {}) {
+  const response = await fetch(`${API_URL}${caminho}`, {
+    headers: obterHeaders(),
+    ...opcoes,
+  });
+  const dados = await response.json();
+
+  if (!response.ok) {
+    throw new Error(mensagemErro(dados, `Erro HTTP ${response.status}`));
+  }
+
+  return dados;
+}
+
+/** Data de hoje (fuso local) no formato yyyy-mm-dd, usada como mínimo do campo de data. */
+function hojeISO() {
+  const agora = new Date();
+  agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
+  return agora.toISOString().slice(0, 10);
+}
+
+/* =====================================================
+   COMPONENTES AUXILIARES
+   ===================================================== */
+
+function Campo({ id, label, children }) {
+  return (
+    <div className="agendar-campo">
+      <label htmlFor={id}>{label}</label>
+      {children}
+    </div>
+  );
+}
+
+/* =====================================================
+   TELA
+   ===================================================== */
+
+const FORM_INICIAL = { aluno: "", data: "", horario: "" };
+
 export default function Agendar() {
   const navigate = useNavigate();
 
-  // ==============================
-  // ESTADOS
-  // ==============================
-  const [aluno, setAluno] = useState("");
-  const [data, setData] = useState("");
-  const [horario, setHorario] = useState("");
+  const [codigoPersonal] = useState(obterCodigoPersonal);
+  const [form, setForm] = useState(FORM_INICIAL);
 
   const [alunos, setAlunos] = useState([]);
   const [carregandoAlunos, setCarregandoAlunos] = useState(false);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
 
-  // ==============================
-  // BUSCAR ALUNOS
-  // ==============================
-  async function buscarAlunos() {
-    try {
-      setCarregandoAlunos(true);
-      setErro("");
+  const ocupado = carregando || carregandoAlunos;
 
-      const response = await fetch("http://localhost:3000/alunos");
-
-      const dados = await response.json();
-
-      console.log("GET /alunos");
-      console.log("Status:", response.status);
-      console.log("Dados:", dados);
-
-      if (!response.ok) {
-        throw new Error(
-          dados.erro ||
-            dados.detalhe ||
-            `Erro HTTP ${response.status}`
-        );
-      }
-
-      setAlunos(dados);
-    } catch (error) {
-      console.error("Erro ao buscar alunos:", error);
-
-      setErro(
-        error.message ||
-          "Não foi possível carregar os alunos."
-      );
-    } finally {
-      setCarregandoAlunos(false);
-    }
-  }
-
-  // Executa quando a tela abre
   useEffect(() => {
+    async function buscarAlunos() {
+      try {
+        setCarregandoAlunos(true);
+        setErro("");
+
+        const dados = await requisitar("/alunos");
+        setAlunos(Array.isArray(dados) ? dados : []);
+      } catch (error) {
+        console.error("Erro ao buscar alunos:", error);
+        setErro(error.message || "Não foi possível carregar os alunos.");
+      } finally {
+        setCarregandoAlunos(false);
+      }
+    }
+
     buscarAlunos();
   }, []);
 
-  // ==============================
-  // AGENDAR
-  // ==============================
+  function alterarCampo(event) {
+    const { name, value } = event.target;
+
+    setForm((anterior) => ({ ...anterior, [name]: value }));
+    setErro("");
+  }
+
   async function agendar(event) {
     event.preventDefault();
 
-    // ==============================
-    // VALIDAR CAMPOS
-    // ==============================
-    if (!aluno || !data || !horario) {
+    if (!codigoPersonal) {
+      setErro("Personal não identificado. Faça login novamente.");
+      return;
+    }
+
+    if (!localStorage.getItem("token")) {
+      setErro("Sessão não encontrada. Faça login novamente.");
+      return;
+    }
+
+    if (!form.aluno || !form.data || !form.horario) {
       setErro("Preencha todos os campos.");
       return;
     }
@@ -78,83 +134,22 @@ export default function Agendar() {
       setCarregando(true);
       setErro("");
 
-      // ==============================
-      // DADOS DO AGENDAMENTO
-      // ==============================
-      const dadosAgendamento = {
-        codigoAluno: Number(aluno),
-        codigoPersonal: 1,
-        dataAgendamento: data,
-        horarioAgendamento: horario,
-        statusAgendamento: "PENDENTE",
-      };
-
-      console.log("================================");
-      console.log("ENVIANDO AGENDAMENTO");
-      console.log("Dados:", dadosAgendamento);
-      console.log("================================");
-
-      // ==============================
-      // POST
-      // ==============================
-      const response = await fetch(
-        "http://localhost:3000/agendamento",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify(dadosAgendamento),
-        }
-      );
-
-      // ==============================
-      // LER RESPOSTA
-      // ==============================
-      const dados = await response.json();
-
-      console.log("================================");
-      console.log("RESPOSTA DO BACKEND");
-      console.log("Status:", response.status);
-      console.log("Dados:", dados);
-      console.log("================================");
-
-      // ==============================
-      // VERIFICAR ERRO
-      // ==============================
-      if (!response.ok) {
-        throw new Error(
-          dados.erro ||
-            dados.detalhe ||
-            dados.message ||
-            `Erro HTTP ${response.status}`
-        );
-      }
-
-      // ==============================
-      // SUCESSO
-      // ==============================
-      console.log(
-        "Agendamento criado com sucesso:",
-        dados
-      );
+      await requisitar("/agendamento", {
+        method: "POST",
+        body: JSON.stringify({
+          codigoAluno: Number(form.aluno),
+          codigoPersonal,
+          dataAgendamento: form.data,
+          horarioAgendamento: form.horario,
+          statusAgendamento: "PENDENTE",
+        }),
+      });
 
       alert("Horário agendado com sucesso!");
-
       navigate("/minha-agenda");
     } catch (error) {
-      console.error("================================");
-      console.error("ERRO AO AGENDAR HORÁRIO");
-      console.error("Mensagem:", error.message);
-      console.error("Erro completo:", error);
-      console.error("================================");
-
-      setErro(
-        error.message ||
-          "Não foi possível agendar o horário."
-      );
+      console.error("Erro ao agendar horário:", error);
+      setErro(error.message || "Não foi possível agendar o horário.");
     } finally {
       setCarregando(false);
     }
@@ -163,118 +158,70 @@ export default function Agendar() {
   return (
     <main className="agendar">
       <div className="agendar-container">
-
         <header className="agendar-cabecalho">
           <h1>Agendar horário</h1>
-
-          <p>
-            Escolha o aluno, a data e o horário do atendimento.
-          </p>
+          <p>Escolha o aluno, a data e o horário do atendimento.</p>
         </header>
 
-        <form
-          className="agendar-form"
-          onSubmit={agendar}
-        >
-
-          {/* ==============================
-              ERRO
-          ============================== */}
+        <form className="agendar-form" onSubmit={agendar} noValidate>
           {erro && (
-            <p className="erro">
+            <p className="agendar-erro" role="alert">
               {erro}
             </p>
           )}
 
-          {/* ==============================
-              ALUNO
-          ============================== */}
-          <label htmlFor="aluno">
-            Aluno
-          </label>
+          <Campo id="aluno" label="Aluno">
+            <select
+              id="aluno"
+              name="aluno"
+              value={form.aluno}
+              onChange={alterarCampo}
+              disabled={carregandoAlunos}
+              required
+            >
+              <option value="">
+                {carregandoAlunos ? "Carregando alunos..." : "Selecione um aluno"}
+              </option>
 
-          <select
-            id="aluno"
-            value={aluno}
-            onChange={(event) => {
-              setAluno(event.target.value);
-              setErro("");
-            }}
-            required
-            disabled={carregandoAlunos}
-          >
-            <option value="">
-              {carregandoAlunos
-                ? "Carregando alunos..."
-                : "Selecione um aluno"}
-            </option>
+              {alunos.map((item) => {
+                const idAluno = item.codigoaluno ?? item.codigoAluno;
 
-            {alunos.map((alunoItem) => {
-              /*
-               * O endpoint /alunos retorna:
-               *
-               * codigoaluno
-               * nome
-               *
-               * Portanto usamos exatamente esses campos.
-               */
-              const idAluno = alunoItem.codigoaluno;
-              const nomeAluno = alunoItem.nome;
+                return (
+                  <option key={idAluno} value={idAluno}>
+                    {item.nome}
+                  </option>
+                );
+              })}
+            </select>
+          </Campo>
 
-              return (
-                <option
-                  key={idAluno}
-                  value={idAluno}
-                >
-                  {nomeAluno}
-                </option>
-              );
-            })}
-          </select>
+          <Campo id="data" label="Data">
+            <input
+              id="data"
+              name="data"
+              type="date"
+              min={hojeISO()}
+              value={form.data}
+              onChange={alterarCampo}
+              required
+            />
+          </Campo>
 
-          {/* ==============================
-              DATA
-          ============================== */}
-          <label htmlFor="data">
-            Data
-          </label>
+          <Campo id="horario" label="Horário">
+            <input
+              id="horario"
+              name="horario"
+              type="time"
+              value={form.horario}
+              onChange={alterarCampo}
+              required
+            />
+          </Campo>
 
-          <input
-            id="data"
-            type="date"
-            value={data}
-            onChange={(event) => {
-              setData(event.target.value);
-              setErro("");
-            }}
-            required
-          />
-
-          {/* ==============================
-              HORÁRIO
-          ============================== */}
-          <label htmlFor="horario">
-            Horário
-          </label>
-
-          <input
-            id="horario"
-            type="time"
-            value={horario}
-            onChange={(event) => {
-              setHorario(event.target.value);
-              setErro("");
-            }}
-            required
-          />
-
-          {/* ==============================
-              BOTÕES
-          ============================== */}
           <div className="agendar-acoes">
-
             <button
               type="button"
+              className="agendar-btn agendar-btn-secundario"
               onClick={() => navigate("/minha-agenda")}
               disabled={carregando}
             >
@@ -283,18 +230,13 @@ export default function Agendar() {
 
             <button
               type="submit"
-              disabled={
-                carregando ||
-                carregandoAlunos
-              }
+              className="agendar-btn agendar-btn-primario"
+              disabled={ocupado}
+              aria-busy={carregando}
             >
-              {carregando
-                ? "Agendando..."
-                : "Agendar horário"}
+              {carregando ? "Agendando..." : "Agendar horário"}
             </button>
-
           </div>
-
         </form>
       </div>
     </main>

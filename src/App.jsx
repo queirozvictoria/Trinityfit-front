@@ -1,8 +1,12 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Logo from "./pages/logo";
 
-// Telas
+// Componentes
+import Sidebar from "./components/Sidebar";
+
+// Telas públicas
 import Login from "./pages/login";
 import Cadastro from "./pages/cadastro";
 
@@ -21,46 +25,71 @@ import AgendarAluno from "./pages/AgendarAluno";
 import AlterarHorario from "./pages/AlterarHorario";
 import CancelarHorario from "./pages/CancelarHorario";
 
+import PrivateRoute from "./pages/PrivateRoute";
+
 function App() {
   return (
     <BrowserRouter>
       <Logo />
 
       <Routes>
-        {/* Login */}
+        {/* Rotas públicas */}
         <Route path="/" element={<Login />} />
-
-        {/* Cadastro */}
         <Route path="/cadastro" element={<Cadastro />} />
 
-        {/* Área do aluno */}
-        <Route path="/aluno" element={<Aluno />} />
-        <Route
-          path="/meus-horarios-aluno"
-          element={<MeusHorariosAluno />}
-        />
-        <Route
-          path="/minha-planilha-de-treino"
-          element={<PlanilhasTreinoAluno />}
-        />
-        <Route path="/agendar-aluno" element={<AgendarAluno />} />
+        {/* Rotas protegidas */}
+        <Route element={<PrivateRoute />}>
+          <Route element={<SidebarLayout />}>
+            {/* Área do aluno */}
+            <Route path="/aluno" element={<Aluno />} />
+            <Route
+              path="/meus-horarios-aluno"
+              element={<MeusHorariosAluno />}
+            />
+            <Route
+              path="/minha-planilha-de-treino"
+              element={<PlanilhasTreinoAluno />}
+            />
+            <Route path="/agendar-aluno" element={<AgendarAluno />} />
 
-        {/* Área do personal */}
-        <Route path="/personal" element={<Personal />} />
-        <Route path="/meus-alunos" element={<MeusAlunos />} />
-        <Route path="/minha-agenda" element={<MeusHorarios />} />
-        <Route path="/disponibilidade" element={<Disponibilidade />} />
+            {/* Área do personal */}
+            <Route path="/personal" element={<Personal />} />
+            <Route path="/meus-alunos" element={<MeusAlunos />} />
+            <Route path="/minha-agenda" element={<MeusHorarios />} />
+            <Route
+              path="/disponibilidade"
+              element={<Disponibilidade />}
+            />
 
-        {/* Planilhas */}
-        <Route path="/planilhas" element={<PlanilhasTreino />} />
-        <Route path="/criar-planilha" element={<CriarPlanilha />} />
+            {/* Planilhas */}
+            <Route path="/planilhas" element={<PlanilhasTreino />} />
+            <Route path="/criar-planilha" element={<CriarPlanilha />} />
 
-        {/* Agendamentos (personal) */}
-        <Route path="/agendar" element={<Agendar />} />
-        <Route path="/alterar-horario" element={<AlterarHorario />} />
-        <Route path="/cancelar-horario" element={<CancelarHorario />} />
+            {/* Agendamentos */}
+            <Route path="/agendar" element={<Agendar />} />
+            <Route
+              path="/alterar-horario"
+              element={<AlterarHorario />}
+            />
+            <Route
+              path="/cancelar-horario"
+              element={<CancelarHorario />}
+            />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
+  );
+}
+
+import { Outlet } from "react-router-dom";
+
+function SidebarLayout() {
+  return (
+    <>
+      <Sidebar />
+      <Outlet />
+    </>
   );
 }
 

@@ -1,17 +1,32 @@
-/* ==============================
-   AGENDAR (ALUNO)
-============================== */
+/* =====================================================
+   AGENDAR - ALUNO 
+   ===================================================== */
 
 .agendar {
+  --cor-primaria: #7c3aed;
+  --cor-primaria-escura: #6d28d9;
+  --cor-primaria-clara: #a78bfa;
+  --cor-titulo: #1e1b2e;
+  --cor-texto: #6b6880;
+  --cor-label: #3b3552;
+  --cor-borda: #e7e3f0;
+  --cor-campo: #faf9fc;
+  --cor-card: #ffffff;
+  --raio: 14px;
+  --anel-foco: 0 0 0 4px rgba(124, 58, 237, 0.16);
+  --gradiente: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+
+  position: relative;
   min-height: 100vh;
-  padding: 32px 16px;
-  background: #f7f4fb;
+  padding: clamp(24px, 6vw, 56px) clamp(12px, 3vw, 16px);
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-  color: #4a1d7a;
+  overflow: hidden;
+
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--cor-titulo);
+  background: #f6f3fc;
 }
 
 .agendar *,
@@ -20,175 +35,314 @@
   box-sizing: border-box;
 }
 
-.agendar-container {
-  width: 100%;
-  max-width: 520px;
+/* Manchas de luz ao fundo */
+.agendar::before,
+.agendar::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
 }
 
-/* ---------- Cabeçalho ---------- */
+.agendar::before {
+  top: -140px;
+  left: -120px;
+  background: rgba(139, 92, 246, 0.28);
+}
+
+.agendar::after {
+  right: -140px;
+  bottom: -160px;
+  background: rgba(244, 114, 182, 0.18);
+}
+
+/* =====================================================
+   CONTAINER
+   ===================================================== */
+
+.agendar-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+  animation: agendar-entrada 0.45s ease both;
+}
+
+@keyframes agendar-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =====================================================
+   CABEÇALHO
+   ===================================================== */
 
 .agendar-cabecalho {
-  margin-bottom: 24px;
+  margin-bottom: 26px;
+}
+
+/* Traço decorativo acima do título */
+.agendar-cabecalho::before {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 5px;
+  margin-bottom: 16px;
+  border-radius: 999px;
+  background: var(--gradiente);
 }
 
 .agendar-cabecalho h1 {
   margin: 0 0 8px;
-  font-size: 28px;
-  font-weight: 700;
-  color: #3f1a73;
+  font-size: clamp(1.7rem, 5vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+
+  background: linear-gradient(135deg, #2e1065 0%, #6d28d9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--cor-titulo); /* fallback */
 }
 
 .agendar-cabecalho p {
   margin: 0;
-  font-size: 16px;
-  color: #6b4a96;
+  color: var(--cor-texto);
+  font-size: 0.975rem;
+  line-height: 1.65;
 }
 
-/* ---------- Formulário (cartão) ---------- */
+/* =====================================================
+   FORMULÁRIO (CARD)
+   ===================================================== */
 
 .agendar-form {
   position: relative;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 28px 24px;
-  background: linear-gradient(135deg, #ffffff 0%, #fbf8ff 100%);
-  border: 1px solid #e3d5f3;
+  padding: clamp(22px, 5vw, 32px);
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.88);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(231, 227, 240, 0.9);
   border-radius: 24px;
-  box-shadow: 0 8px 24px rgba(74, 29, 122, 0.08);
+  box-shadow:
+    0 1px 2px rgba(30, 27, 46, 0.04),
+    0 24px 60px rgba(76, 29, 149, 0.12);
 }
 
-/* círculo decorativo, como nos cartões de alunos */
-.agendar-form::after {
+/* Faixa de cor no topo do card */
+.agendar-form::before {
   content: "";
   position: absolute;
-  top: -40px;
-  right: -40px;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  background: #f5effd;
-  pointer-events: none;
-}
-
-.agendar-form > * {
-  position: relative;
-  z-index: 1;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, #6d28d9, #8b5cf6, #f472b6);
 }
 
 .agendar-form label {
-  margin-top: 10px;
-  font-size: 15px;
+  margin-top: 14px;
+  color: var(--cor-label);
+  font-size: 0.8125rem;
   font-weight: 700;
-  color: #3f1a73;
+  letter-spacing: 0.01em;
+}
+
+.agendar-form label:first-child {
+  margin-top: 6px;
 }
 
 .agendar-form p {
   margin: 4px 0;
-  font-size: 14px;
-  color: #6b4a96;
+  color: var(--cor-texto);
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 
-/* ---------- Campos ---------- */
+/* =====================================================
+   CAMPOS
+   ===================================================== */
 
 .agendar-form select,
 .agendar-form input {
   width: 100%;
-  padding: 12px 14px;
-  font-size: 16px;
-  color: #3f1a73;
-  background: #ffffff;
-  border: 1px solid #d9c7ee;
-  border-radius: 12px;
+  min-height: 50px;
+  padding: 12px 16px;
+
+  color: var(--cor-titulo);
+  background: var(--cor-campo);
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio);
+
+  font-family: inherit;
+  font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.agendar-form input::placeholder {
+  color: #a8a3b8;
+}
+
+.agendar-form select:hover:not(:disabled),
+.agendar-form input:hover:not(:disabled) {
+  border-color: #cdbff0;
+  background: #fff;
 }
 
 .agendar-form select:focus,
 .agendar-form input:focus {
-  border-color: #7c3aed;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18);
+  border-color: var(--cor-primaria);
+  background: #fff;
+  box-shadow: var(--anel-foco);
 }
 
 .agendar-form select:disabled,
 .agendar-form input:disabled {
-  background: #f1ebf8;
+  color: #9d99ad;
+  background: #f1eff6;
   cursor: not-allowed;
 }
 
-/* ---------- Erro ---------- */
-
-.agendar-form .erro {
-  margin: 0 0 8px;
-  padding: 12px 14px;
-  font-size: 14px;
-  font-weight: 700;
-  color: #9b1c3a;
-  background: #fdecef;
-  border: 1px solid #f4c2cd;
-  border-radius: 12px;
+/* Select com seta própria */
+.agendar-form select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 44px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
 }
 
-/* ---------- Botões ---------- */
+.agendar-form select:disabled {
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   MENSAGEM DE ERRO
+   ===================================================== */
+
+.agendar-form .erro {
+  margin: 4px 0 8px;
+  padding: 12px 14px 12px 16px;
+
+  color: #b4232f;
+  background: #fff4f5;
+  border: 1px solid #f6cdd0;
+  border-left: 4px solid #e5484d;
+  border-radius: var(--raio);
+
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* =====================================================
+   BOTÕES
+   ===================================================== */
 
 .agendar-acoes {
   display: flex;
   gap: 12px;
-  margin-top: 20px;
+  margin-top: 26px;
 }
 
 .agendar-acoes button {
   flex: 1;
-  padding: 13px 16px;
-  font-size: 16px;
-  font-weight: 700;
-  border-radius: 12px;
+  min-height: 50px;
+  padding: 12px 18px;
+
+  border: 1.5px solid transparent;
+  border-radius: var(--raio);
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  transition: background 0.2s ease, box-shadow 0.2s ease,
+    transform 0.15s ease, border-color 0.2s ease;
 }
 
-/* Voltar */
+/* Voltar (secundário) */
 .agendar-acoes button[type="button"] {
-  color: #4a1d7a;
-  background: #ffffff;
-  border: 1px solid #d9c7ee;
+  color: var(--cor-label);
+  background: #fff;
+  border-color: var(--cor-borda);
 }
 
 .agendar-acoes button[type="button"]:hover:not(:disabled) {
-  background: #f5effd;
+  background: #f6f2fd;
+  border-color: #d6c9f2;
 }
 
-/* Agendar */
+/* Agendar (principal) */
 .agendar-acoes button[type="submit"] {
-  color: #ffffff;
-  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
-  border: none;
-  box-shadow: 0 6px 16px rgba(91, 33, 182, 0.28);
+  color: #fff;
+  background: var(--gradiente);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.30);
 }
 
 .agendar-acoes button[type="submit"]:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(91, 33, 182, 0.34);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(124, 58, 237, 0.38);
+  filter: brightness(1.05);
+}
+
+.agendar-acoes button:active:not(:disabled) {
+  transform: translateY(0);
+  filter: none;
 }
 
 .agendar-acoes button:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
-/* ---------- Celular ---------- */
+.agendar-acoes button:focus-visible {
+  outline: 3px solid rgba(124, 58, 237, 0.35);
+  outline-offset: 3px;
+}
+
+/* =====================================================
+   RESPONSIVO
+   ===================================================== */
 
 @media (max-width: 480px) {
-  .agendar {
-    padding: 20px 12px;
-  }
-
   .agendar-form {
-    padding: 22px 18px;
+    border-radius: 20px;
   }
 
   .agendar-acoes {
     flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .agendar-acoes button {
+    width: 100%;
+  }
+}
+
+/* Respeita quem prefere menos animação */
+@media (prefers-reduced-motion: reduce) {
+  .agendar *,
+  .agendar-container {
+    animation: none !important;
+    transition: none !important;
   }
 }

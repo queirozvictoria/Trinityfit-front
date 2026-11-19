@@ -2,11 +2,6 @@
 import { useCallback, useEffect, useState } from "react";
 import "./PlanilhasTreinoAluno.css";
 
-// Código do aluno logado.
-// Em produção, obtenha esse código do contexto de autenticação
-// ou da sessão do usuário, em vez de deixá-lo fixo.
-const CODIGO_ALUNO_LOGADO = 1;
-
 const API_URL = "http://localhost:3000";
 
 function formatarData(valor) {
@@ -27,7 +22,9 @@ function tituloTreino(planilha) {
 
   if (!data) return "Ficha de acompanhamento";
 
-  return horario ? `Treino de ${data} às ${horario}` : `Treino de ${data}`;
+  return horario
+    ? `Treino de ${data} às ${horario}`
+    : `Treino de ${data}`;
 }
 
 export default function PlanilhasTreinoAluno() {
@@ -40,9 +37,20 @@ export default function PlanilhasTreinoAluno() {
     setErro("");
 
     try {
-      // Planilhas ligadas aos agendamentos do aluno logado
+      const usuario = JSON.parse(
+        localStorage.getItem("usuario") || "null"
+      );
+
+      const codigoAluno = usuario?.codigoAluno;
+
+      if (!codigoAluno) {
+        throw new Error(
+          "Aluno não identificado. Faça login novamente."
+        );
+      }
+
       const response = await fetch(
-        `${API_URL}/plano-treino/aluno/${CODIGO_ALUNO_LOGADO}`
+        `${API_URL}/plano-treino/aluno/${codigoAluno}`
       );
 
       const dados = await response.json();
@@ -54,14 +62,17 @@ export default function PlanilhasTreinoAluno() {
       }
 
       if (!Array.isArray(dados)) {
-        throw new Error("O servidor retornou dados em um formato inválido.");
+        throw new Error(
+          "O servidor retornou dados em um formato inválido."
+        );
       }
 
       setPlanilhas(dados);
+
     } catch (error) {
-      console.error("Erro ao buscar planilhas do aluno:", error);
+      console.error("Erro ao buscar planilhas:", error);
       setErro(
-        error.message || "Erro ao conectar com o servidor. Tente novamente."
+        error.message || "Erro ao conectar com o servidor."
       );
     } finally {
       setCarregando(false);
@@ -75,16 +86,20 @@ export default function PlanilhasTreinoAluno() {
   return (
     <main className="planilha-aluno">
       <div className="planilha-aluno-container">
+
         <header className="planilha-aluno-cabecalho">
           <h1>Meu Treino</h1>
           <p>Confira os treinos definidos pelo seu personal.</p>
         </header>
 
-        <div className="planilha-semana">Treino da semana</div>
+        <div className="planilha-semana">
+          Treino da semana
+        </div>
 
         {erro && (
           <div className="mensagem-erro" role="alert">
             <p>{erro}</p>
+
             <button
               type="button"
               onClick={buscarMeusTreinos}
@@ -96,44 +111,46 @@ export default function PlanilhasTreinoAluno() {
         )}
 
         {carregando && (
-          <p className="mensagem-carregando" role="status" aria-live="polite">
+          <p className="mensagem-carregando">
             Carregando sua planilha...
           </p>
         )}
 
         {!carregando && !erro && (
           <div className="lista-planilhas-conteudo">
+
             {planilhas.length === 0 ? (
               <p className="lista-vazia">
                 Você ainda não possui nenhuma planilha de treino vinculada.
               </p>
             ) : (
-              planilhas.map((planilha) => {
-                return (
-                  <section
-                    className="treino-card"
-                    key={planilha.codigoPlanoTreino}
+              planilhas.map((planilha) => (
+                <section
+                  className="treino-card"
+                  key={planilha.codigoPlanoTreino}
+                >
+                  <p className="treino-dia">
+                    Treino vinculado
+                  </p>
+
+                  <h2 className="nome-treino">
+                    {tituloTreino(planilha)}
+                  </h2>
+
+                  <div
+                    className="exercicio informacoes-exercicio"
+                    style={{
+                      whiteSpace: "pre-line",
+                      lineHeight: 1.7,
+                    }}
                   >
-                    <p className="treino-dia">Treino vinculado</p>
-
-                    <h2 className="nome-treino">
-                      {tituloTreino(planilha)}
-                    </h2>
-
-                    <div
-                      className="exercicio informacoes-exercicio"
-                      style={{
-                        whiteSpace: "pre-line",
-                        lineHeight: 1.7,
-                      }}
-                    >
-                      {planilha.descricaoPlanoTreino ||
-                        "Nenhuma descrição foi adicionada a esta planilha."}
-                    </div>
-                  </section>
-                );
-              })
+                    {planilha.descricaoPlanoTreino ||
+                      "Nenhuma descrição foi adicionada a esta planilha."}
+                  </div>
+                </section>
+              ))
             )}
+
           </div>
         )}
 
@@ -141,6 +158,7 @@ export default function PlanilhasTreinoAluno() {
           Esta planilha é definida pelo seu personal e não pode ser alterada
           por você.
         </div>
+
       </div>
     </main>
   );

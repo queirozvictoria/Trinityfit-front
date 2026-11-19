@@ -1,10 +1,29 @@
+
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./Personal.css";
 
-// Identificador do personal trainer
-const CODIGO_PERSONAL_LOGADO = 1;
+const API_URL = "http://localhost:3000";
+
+// Identificar o personal que realizou o login
+function obterCodigoPersonal() {
+  try {
+    const usuario = JSON.parse(
+      localStorage.getItem("usuario") || "null"
+    );
+
+    return (
+      usuario?.codigoPersonal ??
+      usuario?.codigopersonal ??
+      usuario?.personal?.codigoPersonal ??
+      usuario?.personal?.codigopersonal ??
+      null
+    );
+  } catch {
+    return null;
+  }
+}
 
 export default function Personal() {
   const navigate = useNavigate();
@@ -13,34 +32,49 @@ export default function Personal() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
 
+  const codigoPersonal = obterCodigoPersonal();
+
   const buscarDadosPersonal = useCallback(async () => {
+    if (!codigoPersonal) {
+      setErro("Personal não identificado. Faça login novamente.");
+      setPersonal(null);
+      setCarregando(false);
+      return;
+    }
+
     try {
       setCarregando(true);
       setErro("");
 
       const response = await fetch(
-        `http://localhost:3000/personal/${CODIGO_PERSONAL_LOGADO}`
+        `${API_URL}/personal/${codigoPersonal}`
       );
 
+      const dados = await response.json();
+
       if (!response.ok) {
-        throw new Error("Não foi possível carregar os dados do personal.");
+        throw new Error(
+          dados.erro || "Não foi possível carregar os dados do personal."
+        );
       }
 
-      const dados = await response.json();
       setPersonal(dados);
     } catch (error) {
       console.error("Erro ao buscar dados do personal:", error);
+
       setErro(error.message || "Erro ao carregar os dados.");
     } finally {
       setCarregando(false);
     }
-  }, []);
+  }, [codigoPersonal]);
 
   useEffect(() => {
     buscarDadosPersonal();
   }, [buscarDadosPersonal]);
 
-  const nomePersonal = personal?.nome || personal?.nomePersonal;
+  const nomePersonal =
+    personal?.nome ||
+    personal?.nomePersonal;
 
   return (
     <main className="personal">
@@ -65,14 +99,22 @@ export default function Personal() {
               onClick={buscarDadosPersonal}
             >
               <h3>Tentar novamente</h3>
-              <p>Não foi possível carregar seus dados. Clique para tentar novamente.</p>
+              <p>
+                Não foi possível carregar seus dados.
+                Clique para tentar novamente.
+              </p>
             </button>
           )}
         </header>
 
-        <h2 className="personal-servicos-titulo">Serviços</h2>
+        <h2 className="personal-servicos-titulo">
+          Serviços
+        </h2>
 
-        <nav className="personal-servicos" aria-label="Serviços do personal">
+        <nav
+          className="personal-servicos"
+          aria-label="Serviços do personal"
+        >
           <button
             type="button"
             className="personal-servico"
@@ -106,10 +148,13 @@ export default function Personal() {
             </p>
           </button>
 
-          <button type="button" onClick={() => navigate("/disponibilidade")}>
-           Adicionar meus horários disponíveis
-           </button>
-
+          <button
+            type="button"
+            className="personal-servico"
+            onClick={() => navigate("/disponibilidade")}
+          >
+            Adicionar meus horários disponíveis
+          </button>
         </nav>
       </div>
     </main>

@@ -1,255 +1,522 @@
-.meus-horarios-aluno {
-  min-height: 100vh;
-  padding: 32px 20px;
-  background: #faf8fc;
-  color: #432080;
+
+/* =========================================================
+   MEUS HORÁRIOS - ÁREA DO ALUNO
+========================================================= */
+
+.mha,
+.mha * {
   box-sizing: border-box;
 }
 
-.horarios-aluno-container {
+.mha {
+  min-height: 100vh;
+  padding: 45px 24px;
+  color: #432080;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(167, 139, 250, 0.15),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(192, 132, 252, 0.10),
+      transparent 35%
+    ),
+    #faf8ff;
+}
+
+.mha-container {
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
 }
 
-.horarios-aluno-cabecalho {
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.mha-cabecalho {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 28px;
-}
-
-.horarios-aluno-cabecalho h1 {
-  margin: 0;
-  color: #432080;
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1.3;
-  overflow-wrap: anywhere;
-}
-
-.horarios-aluno-lista {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 20px;
+
+  margin-bottom: 32px;
+  padding-bottom: 25px;
+
+  border-bottom: 1px solid #e5d9f3;
 }
 
-.horario-aluno-card {
-  position: relative;
-  isolation: isolate;
-  min-width: 0;
-  padding: 22px;
-  overflow: hidden;
-  background: #fff;
-  border: 1px solid #e9ddf4;
-  border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(67, 32, 128, 0.08);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.horario-aluno-card::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  left: 0;
-  width: 5px;
-  height: 100%;
-  background: #af0bd8;
-}
-
-.horario-aluno-card:hover {
-  transform: translateY(-3px);
-  border-color: #b576f4;
-  box-shadow: 0 8px 22px rgba(67, 32, 128, 0.13);
-}
-
-.horario-aluno-card h2 {
-  margin: 0 0 14px;
-  color: #432080;
-  font-size: 1.2rem;
-  font-weight: 700;
-  overflow-wrap: anywhere;
-}
-
-.horario-aluno-card p {
-  margin: 8px 0;
-  color: #76658a;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  overflow-wrap: anywhere;
-}
-
-.horario-aluno-card strong {
-  color: #432080;
-  font-weight: 600;
-}
-
-.horario-marcado {
-  border-color: #b576f4;
-  background: linear-gradient(145deg, #fff 0%, #faf5ff 100%);
-}
-
-.status-marcado,
-.status-disponivel {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 100%;
-  margin-top: 12px;
-  padding: 7px 12px;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-}
-
-.status-marcado {
-  color: #432080;
-  background: #ead8ff;
-  border: 1px solid #d7b8ff;
-}
-
-.status-disponivel {
-  color: #6f1591;
-  background: #f5e5fc;
-  border: 1px solid #e8c7f7;
-}
-
-.sem-horarios-aluno {
-  padding: 36px 22px;
-  text-align: center;
-  color: #76658a;
-  background: #fff;
-  border: 1px dashed #cbb2e5;
-  border-radius: 16px;
-}
-
-.sem-horarios-aluno p {
+.mha-cabecalho h1 {
   margin: 0;
-  font-size: 1rem;
-  line-height: 1.6;
+  color: #3b0764;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.6px;
 }
 
-.horarios-aluno-voltar {
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 28px;
+.mha-cabecalho h1::after {
+  content: "";
+  display: block;
+  width: 58px;
+  height: 4px;
+  margin-top: 12px;
+  border-radius: 20px;
+
+  background: linear-gradient(
+    90deg,
+    #6d28d9,
+    #a855f7,
+    #d8b4fe
+  );
 }
 
-.botao-voltar-horarios-aluno {
+.mha-cabecalho p {
+  max-width: 600px;
+  margin: 13px 0 0;
+
+  color: #78678f;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+
+.mha button {
+  font-family: inherit;
+}
+
+.mha-btn-secundario,
+.mha-btn-desmarcar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+
   min-height: 44px;
-  padding: 11px 20px;
-  color: #fff;
-  background: #432080;
-  border: 2px solid #432080;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-align: center;
-  text-decoration: none;
+  padding: 11px 19px;
+
+  border: 1px solid transparent;
+  border-radius: 11px;
+
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
+
   transition:
-    background-color 0.2s ease,
+    background 0.2s ease,
     border-color 0.2s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
-.botao-voltar-horarios-aluno:hover {
-  background: #af0bd8;
-  border-color: #af0bd8;
-  box-shadow: 0 4px 12px rgba(175, 11, 216, 0.2);
-  transform: translateY(-1px);
+/* Botão secundário */
+
+.mha-btn-secundario {
+  color: #6d28d9;
+  background: #ffffff;
+  border-color: #dfd0ef;
+
+  box-shadow: 0 3px 10px rgba(76, 29, 149, 0.05);
 }
 
-.botao-voltar-horarios-aluno:focus-visible {
-  outline: 3px solid #b576f4;
+.mha-btn-secundario:hover:not(:disabled) {
+  color: #4c1d95;
+  background: #f3eefe;
+  border-color: #a78bfa;
+
+  box-shadow: 0 5px 14px rgba(76, 29, 149, 0.10);
+  transform: translateY(-2px);
+}
+
+/* Botão desmarcar */
+
+.mha-btn-desmarcar {
+  color: #b91c1c;
+  background: #fff7f7;
+  border-color: #fecaca;
+}
+
+.mha-btn-desmarcar:hover:not(:disabled) {
+  color: #991b1b;
+  background: #fee2e2;
+  border-color: #fca5a5;
+
+  box-shadow: 0 5px 13px rgba(185, 28, 28, 0.10);
+  transform: translateY(-2px);
+}
+
+/* Estados dos botões */
+
+.mha button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.mha button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.mha button:focus-visible {
+  outline: 3px solid rgba(139, 92, 246, 0.35);
   outline-offset: 4px;
 }
 
-.botao-voltar-horarios-aluno:active {
-  transform: translateY(0);
+/* =========================================================
+   MENSAGENS
+========================================================= */
+
+.mha-mensagem {
+  margin: 0 0 20px;
+  padding: 15px 19px;
+
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
 }
 
-@media (max-width: 700px) {
-  .meus-horarios-aluno {
-    padding: 24px 16px;
+.mha-sucesso {
+  color: #166534;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.mha-erro {
+  color: #991b1b;
+  background: #fff1f2;
+  border: 1px solid #fecaca;
+}
+
+/* =========================================================
+   LISTA DE HORÁRIOS
+========================================================= */
+
+.mha-lista {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* =========================================================
+   CARTÃO DO HORÁRIO
+========================================================= */
+
+.mha-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 17px;
+
+  min-width: 0;
+  padding: 25px;
+  overflow: hidden;
+
+  background: linear-gradient(
+    145deg,
+    #ffffff 0%,
+    #faf7ff 100%
+  );
+
+  border: 1px solid #e5d9f3;
+  border-radius: 18px;
+
+  box-shadow:
+    0 5px 15px rgba(67, 32, 128, 0.05),
+    0 12px 28px rgba(67, 32, 128, 0.06);
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* Indicador lateral */
+
+.mha-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 5px;
+  height: 100%;
+
+  background: linear-gradient(
+    180deg,
+    #a78bfa,
+    #7c3aed,
+    #c084fc
+  );
+
+  pointer-events: none;
+}
+
+/* Detalhe decorativo */
+
+.mha-card::after {
+  content: "";
+  position: absolute;
+  top: -55px;
+  right: -55px;
+
+  width: 125px;
+  height: 125px;
+
+  border-radius: 50%;
+  background: rgba(167, 139, 250, 0.10);
+
+  pointer-events: none;
+}
+
+.mha-card:hover {
+  transform: translateY(-4px);
+  border-color: #bba0e8;
+
+  box-shadow:
+    0 9px 22px rgba(67, 32, 128, 0.09),
+    0 16px 32px rgba(67, 32, 128, 0.07);
+}
+
+/* =========================================================
+   INFORMAÇÕES DO HORÁRIO
+========================================================= */
+
+.mha-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+
+  width: 100%;
+  min-width: 0;
+}
+
+.mha-data {
+  color: #4c1d95;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.mha-hora {
+  display: inline-flex;
+  align-items: center;
+
+  color: #78678f;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.mha-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  max-width: 100%;
+  padding: 7px 13px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  overflow-wrap: anywhere;
+}
+
+/* Pendente */
+
+.mha-status-pendente {
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+}
+
+/* Confirmado */
+
+.mha-status-confirmado {
+  color: #166534;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+}
+
+/* Concluído */
+
+.mha-status-concluido {
+  color: #5b21b6;
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+}
+
+/* Cancelado */
+
+.mha-status-cancelado {
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+}
+
+/* =========================================================
+   BOTÃO DESMARCAR NO CARTÃO
+========================================================= */
+
+.mha-card .mha-btn-desmarcar {
+  width: 100%;
+  margin-top: 2px;
+}
+
+/* =========================================================
+   CARREGAMENTO E LISTA VAZIA
+========================================================= */
+
+.mha-vazio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 130px;
+  padding: 30px 22px;
+
+  color: #78678f;
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #faf7ff
+  );
+
+  border: 1px dashed #c4a7e8;
+  border-radius: 17px;
+
+  font-size: 15px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* =========================================================
+   AÇÕES INFERIORES
+========================================================= */
+
+.mha-acoes {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  margin-top: 30px;
+  padding-top: 22px;
+
+  border-top: 1px solid #e5d9f3;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 750px) {
+  .mha {
+    padding: 35px 20px;
   }
 
-  .horarios-aluno-cabecalho {
-    align-items: flex-start;
-    flex-direction: column;
-    margin-bottom: 22px;
+  .mha-cabecalho h1 {
+    font-size: 30px;
   }
 
-  .horarios-aluno-cabecalho h1 {
-    font-size: 1.7rem;
-  }
-
-  .horarios-aluno-lista {
+  .mha-lista {
     grid-template-columns: 1fr;
     gap: 16px;
   }
 
-  .horario-aluno-card {
-    padding: 20px;
+  .mha-card {
+    padding: 23px;
   }
 }
 
+/* =========================================================
+   CELULAR
+========================================================= */
+
 @media (max-width: 480px) {
-  .meus-horarios-aluno {
-    padding: 20px 12px;
+  .mha {
+    padding: 25px 15px;
   }
 
-  .horarios-aluno-cabecalho h1 {
-    font-size: 1.45rem;
+  .mha-cabecalho {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 17px;
+
+    margin-bottom: 25px;
   }
 
-  .horario-aluno-card {
-    padding: 18px 16px;
-    border-radius: 12px;
+  .mha-cabecalho h1 {
+    font-size: 27px;
   }
 
-  .horario-aluno-card h2 {
-    font-size: 1.1rem;
+  .mha-cabecalho p {
+    font-size: 14px;
   }
 
-  .horario-aluno-card p {
-    font-size: 0.9rem;
+  .mha-cabecalho > div:last-child {
+    width: 100%;
   }
 
-  .sem-horarios-aluno {
-    padding: 28px 16px;
+  .mha-cabecalho > div:last-child button {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    font-size: 13px;
   }
 
-  .horarios-aluno-voltar {
-    margin-top: 22px;
+  .mha-card {
+    padding: 21px 19px;
+    border-radius: 15px;
   }
 
-  .botao-voltar-horarios-aluno {
+  .mha-data {
+    font-size: 20px;
+  }
+
+  .mha-hora {
+    font-size: 15px;
+  }
+
+  .mha-acoes {
+    width: 100%;
+  }
+
+  .mha-acoes button {
     width: 100%;
   }
 }
 
+/* =========================================================
+   ACESSIBILIDADE
+========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
-  .horario-aluno-card,
-  .botao-voltar-horarios-aluno {
+  .mha-card,
+  .mha button {
     transition: none;
   }
 
-  .horario-aluno-card:hover,
-  .botao-voltar-horarios-aluno:hover {
+  .mha-card:hover,
+  .mha button:hover {
     transform: none;
   }
 }

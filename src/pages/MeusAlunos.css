@@ -1,3 +1,4 @@
+
 /* =========================================================
    CARD DO ALUNO
 ========================================================= */
@@ -9,10 +10,10 @@
   padding: 26px;
   overflow: hidden;
 
-  border: 1px solid #e1d5e8;
+  border: 1px solid #e5d9f3;
   border-radius: 18px;
 
-  background: linear-gradient(145deg, #ffffff 0%, #fdfaff 100%);
+  background: linear-gradient(145deg, #ffffff 0%, #faf7ff 100%);
   color: #432080;
 
   box-shadow:
@@ -27,9 +28,7 @@
     box-shadow 0.25s ease;
 }
 
-/* =========================================================
-   DETALHE DECORATIVO
-========================================================= */
+/* DETALHE DECORATIVO */
 
 .aluno-card::after {
   content: "";
@@ -41,31 +40,27 @@
   height: 120px;
 
   border-radius: 50%;
-  background-color: rgba(181, 118, 244, 0.08);
+  background-color: rgba(167, 139, 250, 0.12);
 
   pointer-events: none;
 }
 
-/* =========================================================
-   HOVER E CLIQUE
-========================================================= */
+/* HOVER E CLIQUE */
 
-.aluno-card:hover {
+.aluno-card:hover:not(:disabled) {
   transform: translateY(-5px);
-  border-color: #b576f4;
+  border-color: #a78bfa;
 
   box-shadow:
     0 10px 22px rgba(67, 32, 128, 0.08),
     0 18px 35px rgba(67, 32, 128, 0.10);
 }
 
-.aluno-card:active {
+.aluno-card:active:not(:disabled) {
   transform: translateY(-2px);
 }
 
-/* =========================================================
-   CASO O CARD SEJA UM BUTTON
-========================================================= */
+/* BOTÃO DO CARD */
 
 button.aluno-card {
   display: block;
@@ -81,16 +76,123 @@ button.aluno-card {
 }
 
 .aluno-card:focus-visible {
-  outline: 3px solid rgba(175, 11, 216, 0.35);
+  outline: 3px solid rgba(139, 92, 246, 0.4);
   outline-offset: 4px;
 }
 
-/* =========================================================
-   INDICADOR LATERAL
-========================================================= */
+/* INDICADOR LATERAL */
 
 .aluno-card::before {
   content: "";
   position: absolute;
   top: 0;
-  left: 0;}
+  left: 0;
+
+  width: 5px;
+  height: 100%;
+
+  border-radius: 18px 0 0 18px;
+
+  background: linear-gradient(
+    180deg,
+    #a78bfa 0%,
+    #7c3aed 50%,
+    #c084fc 100%
+  );
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   BOTÃO ATUALIZAR LISTA
+========================================================= */
+
+.meus-alunos .meus-alunos-cabecalho .btn-atualizar-alunos {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  min-height: 48px;
+  padding: 0 24px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow: 0 5px 15px rgba(109, 40, 217, 0.25);
+
+  transition: all 0.2s ease;
+}
+
+.meus-alunos .meus-alunos-cabecalho .btn-atualizar-alunos:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+  transform: translateY(-3px);
+
+  box-shadow: 0 9px 20px rgba(109, 40, 217, 0.35);
+}
+
+.meus-alunos .meus-alunos-cabecalho .btn-atualizar-alunos:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-atualizar-alunos:focus-visible {
+  outline: 3px solid rgba(139, 92, 246, 0.4);
+  outline-offset: 4px;
+}
+
+.btn-atualizar-alunos:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 600px) {
+  .aluno-card {
+    min-height: 160px;
+    padding: 22px;
+    border-radius: 15px;
+  }
+
+  .aluno-card::after {
+    width: 100px;
+    height: 100px;
+    top: -35px;
+    right: -35px;
+  }
+
+  .btn-atualizar-alunos {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* =========================================================
+   ACESSIBILIDADE
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .aluno-card,
+  .btn-atualizar-alunos {
+    transition: none;
+  }
+
+  .aluno-card:hover,
+  .aluno-card:active,
+  .btn-atualizar-alunos:hover,
+  .btn-atualizar-alunos:active {
+    transform: none;
+  }
+}

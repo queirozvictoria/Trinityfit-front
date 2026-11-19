@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api.js";
-import "./AlterarHorario.css";
+import "./CancelarHorario.css";
 
 function formatarData(valor) {
   if (!valor) return "—";

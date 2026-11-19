@@ -2,9 +2,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import "./Agendar.css";
+import "./AgendarAluno.css";
 
 const API_URL = "http://localhost:3000";
+
+function obterUsuario() {
+  try {
+    return JSON.parse(localStorage.getItem("usuario") || "null");
+  } catch {
+    return null;
+  }
+}
 
 function soData(valor) {
   return valor ? String(valor).split("T")[0] : "";
@@ -25,7 +33,7 @@ async function lerJson(response) {
   try {
     return texto ? JSON.parse(texto) : {};
   } catch {
-    throw new Error("O servidor retornou uma resposta inválida.");
+    throw new Error(texto || "O servidor retornou uma resposta inválida.");
   }
 }
 
@@ -33,16 +41,16 @@ export default function AgendarAluno() {
   const navigate = useNavigate();
   const hoje = new Date().toLocaleDateString("en-CA");
 
-  // RECUPERAR O ALUNO LOGADO
-  let usuario = null;
+  const usuario = obterUsuario();
 
-  try {
-    usuario = JSON.parse(localStorage.getItem("usuario") || "null");
-  } catch {
-    usuario = null;
-  }
+  const codigoAluno = Number(
+    usuario?.codigoAluno ??
+    usuario?.codigoaluno ??
+    usuario?.aluno?.codigoAluno ??
+    usuario?.aluno?.codigoaluno
+  ) || null;
 
-  const codigoAluno = Number(usuario?.codigoAluno) || null;
+  const token = localStorage.getItem("token");
 
   const [personais, setPersonais] = useState([]);
   const [personal, setPersonal] = useState("");
@@ -63,26 +71,29 @@ export default function AgendarAluno() {
         setCarregandoPersonais(true);
         setErro("");
 
-        const response = await fetch(`${API_URL}/personal`);
+        const response = await fetch(`${API_URL}/personal`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         const dados = await lerJson(response);
 
         if (!response.ok) {
-          throw new Error(
-            dados.erro || "Não foi possível carregar os personais."
-          );
+          throw new Error(dados.erro || dados.message || "Não foi possível carregar os personais.");
         }
 
         setPersonais(Array.isArray(dados) ? dados : []);
       } catch (error) {
         console.error("Erro ao buscar personais:", error);
-        setErro(error.message || "Não foi possível carregar os personais.");
+        setErro(error.message);
       } finally {
         setCarregandoPersonais(false);
       }
     }
 
     buscarPersonais();
-  }, []);
+  }, [token]);
 
   // BUSCAR HORÁRIOS ATIVOS DO PERSONAL
   async function escolherPersonal(codigo) {
@@ -97,15 +108,18 @@ export default function AgendarAluno() {
       setCarregandoHorarios(true);
 
       const response = await fetch(
-        `${API_URL}/disponibilidade/personal/${codigo}/ativas`
+        `${API_URL}/disponibilidade/personal/${codigo}/ativas`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       const dados = await lerJson(response);
 
       if (!response.ok) {
-        throw new Error(
-          dados.erro || "Não foi possível carregar os horários."
-        );
+        throw new Error(dados.erro || dados.message || "Não foi possível carregar os horários.");
       }
 
       const futuras = (Array.isArray(dados) ? dados : []).filter(
@@ -115,7 +129,7 @@ export default function AgendarAluno() {
       setDisponibilidades(futuras);
     } catch (error) {
       console.error("Erro ao buscar horários:", error);
-      setErro(error.message || "Não foi possível carregar os horários.");
+      setErro(error.message);
     } finally {
       setCarregandoHorarios(false);
     }
@@ -124,14 +138,16 @@ export default function AgendarAluno() {
   // AGENDAR HORÁRIO
   async function agendar(event) {
     event.preventDefault();
-
     setErro("");
 
+    if (!token) {
+      setErro("Sua sessão expirou. Faça login novamente.");
+      return;
+    }
+
     if (!codigoAluno) {
-      setErro(
-        "Aluno não identificado. Faça login novamente para realizar o agendamento."
-      );
-      console.error("Dados do usuário no localStorage:", usuario);
+      setErro("Aluno não identificado. Faça login novamente.");
+      console.error("Usuário salvo:", usuario);
       return;
     }
 
@@ -166,34 +182,42 @@ export default function AgendarAluno() {
     try {
       setCarregando(true);
 
+      const dadosAgendamento = {
+        codigoAluno,
+        codigoPersonal: Number(personal),
+        dataAgendamento: dataFinal,
+        horarioAgendamento: horarioFinal,
+        statusAgendamento: "PENDENTE",
+      };
+
+      console.log("Dados do agendamento:", dadosAgendamento);
+
       const response = await fetch(`${API_URL}/agendamento`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          codigoAluno: codigoAluno,
-          codigoPersonal: Number(personal),
-          dataAgendamento: dataFinal,
-          horarioAgendamento: horarioFinal,
-          statusAgendamento: "PENDENTE",
-        }),
+        body: JSON.stringify(dadosAgendamento),
       });
 
       const dados = await lerJson(response);
 
       if (!response.ok) {
+        console.error("Resposta do backend:", response.status, dados);
+
         throw new Error(
-          dados.erro || "Não foi possível agendar o horário."
+          dados.erro ||
+          dados.message ||
+          `Erro ${response.status}: não foi possível agendar.`
         );
       }
 
       alert("Horário agendado com sucesso!");
-
       navigate("/meus-horarios-aluno");
     } catch (error) {
       console.error("Erro ao agendar horário:", error);
-      setErro(error.message || "Não foi possível agendar o horário.");
+      setErro(error.message);
     } finally {
       setCarregando(false);
     }
@@ -202,21 +226,14 @@ export default function AgendarAluno() {
   return (
     <main className="agendar">
       <div className="agendar-container">
-
         <header className="agendar-cabecalho">
           <h1>Agendar horário</h1>
           <p>Escolha o personal e o horário do seu treino.</p>
         </header>
 
         <form className="agendar-form" onSubmit={agendar}>
+          {erro && <p className="erro">{erro}</p>}
 
-          {erro && (
-            <p className="erro">
-              {erro}
-            </p>
-          )}
-
-          {/* ESCOLHER PERSONAL */}
           <label htmlFor="personal">Personal</label>
 
           <select
@@ -232,22 +249,21 @@ export default function AgendarAluno() {
                 : "Selecione um personal"}
             </option>
 
-            {personais.map((item) => (
-              <option
-                key={item.codigoPersonal}
-                value={item.codigoPersonal}
-              >
-                {item.nome}
-              </option>
-            ))}
+            {personais.map((item) => {
+              const codigo = item.codigoPersonal ?? item.codigopersonal;
+
+              return (
+                <option key={codigo} value={codigo}>
+                  {item.nome}
+                </option>
+              );
+            })}
           </select>
 
-          {/* CARREGANDO HORÁRIOS */}
           {personal && carregandoHorarios && (
             <p>Buscando horários disponíveis...</p>
           )}
 
-          {/* EXISTEM HORÁRIOS DISPONÍVEIS */}
           {personal &&
             !carregandoHorarios &&
             disponibilidades.length > 0 && (
@@ -266,9 +282,7 @@ export default function AgendarAluno() {
                   required
                   disabled={carregando}
                 >
-                  <option value="">
-                    Selecione um horário
-                  </option>
+                  <option value="">Selecione um horário</option>
 
                   {disponibilidades.map((item) => (
                     <option
@@ -284,7 +298,6 @@ export default function AgendarAluno() {
               </>
             )}
 
-          {/* NÃO EXISTEM HORÁRIOS */}
           {personal &&
             !carregandoHorarios &&
             disponibilidades.length === 0 && (
@@ -293,9 +306,7 @@ export default function AgendarAluno() {
               </p>
             )}
 
-          {/* BOTÕES */}
           <div className="agendar-acoes">
-
             <button
               type="button"
               onClick={() => navigate("/meus-horarios-aluno")}
@@ -314,11 +325,8 @@ export default function AgendarAluno() {
                 disponibilidades.length === 0
               }
             >
-              {carregando
-                ? "Agendando..."
-                : "Agendar horário"}
+              {carregando ? "Agendando..." : "Agendar horário"}
             </button>
-
           </div>
         </form>
       </div>

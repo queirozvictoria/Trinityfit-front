@@ -15,7 +15,7 @@ export default function Aluno() {
           <h1>Área do Aluno</h1>
 
           <p>
-            Bem-vindo à sua área de treino!
+                        Bem-vindo 
             <br />
             Acompanhe seus horários e sua rotina de exercícios.
           </p>
@@ -26,7 +26,6 @@ export default function Aluno() {
             id="servicos-titulo"
             className="servicos-titulo"
           >
-            Seus serviços
           </h2>
 
           <p className="servicos-descricao">

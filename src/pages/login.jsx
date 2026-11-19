@@ -13,73 +13,85 @@ function Login() {
     const [carregando, setCarregando] = useState(false);
     const [erro, setErro] = useState("");
 
-    const entrar = async (e) => {
-        e.preventDefault();
-        setErro("");
+    
+const entrar = async (e) => {
+    e.preventDefault();
+    setErro("");
 
-        try {
-            setCarregando(true);
+    try {
+        setCarregando(true);
 
-            const rotaLogin =
-                tipoUsuario === "aluno"
-                    ? "/alunos/login"
-                    : "/personal/login";
+        const rotaLogin =
+            tipoUsuario === "aluno"
+                ? "/alunos/login"
+                : "/personal/login";
 
-            const response = await fetch(`${API_URL}${rotaLogin}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: email.trim().toLowerCase(),
-                    senha
-                })
-            });
+        const response = await fetch(`${API_URL}${rotaLogin}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: email.trim().toLowerCase(),
+                senha
+            })
+        });
 
-            const dados = await response.json();
+        const dados = await response.json();
 
-            if (!response.ok) {
-                throw new Error(
-                    dados.erro || "Não foi possível realizar o login."
-                );
-            }
-
-            if (!dados.usuario) {
-                throw new Error("Dados do usuário não encontrados.");
-            }
-
-            if (
-                tipoUsuario === "aluno" &&
-                !dados.usuario.codigoAluno
-            ) {
-                throw new Error("Código do aluno não encontrado.");
-            }
-
-            if (
-                tipoUsuario === "personal" &&
-                !dados.usuario.codigoPersonal
-            ) {
-                throw new Error("Código do personal não encontrado.");
-            }
-
-            localStorage.setItem(
-                "usuario",
-                JSON.stringify(dados.usuario)
+        if (!response.ok) {
+            throw new Error(
+                dados.erro || dados.message ||
+                "Não foi possível realizar o login."
             );
-
-            if (tipoUsuario === "aluno") {
-                navigate("/aluno");
-            } else {
-                navigate("/personal");
-            }
-
-        } catch (error) {
-            console.error("Erro ao realizar login:", error);
-            setErro(error.message || "Erro ao conectar com o servidor.");
-        } finally {
-            setCarregando(false);
         }
-    };
+
+        if (!dados.usuario) {
+            throw new Error("Dados do usuário não encontrados.");
+        }
+
+        if (!dados.token) {
+            throw new Error("Token de autenticação não recebido.");
+        }
+
+        if (
+            tipoUsuario === "aluno" &&
+            !dados.usuario.codigoAluno
+        ) {
+            throw new Error("Código do aluno não encontrado.");
+        }
+
+        if (
+            tipoUsuario === "personal" &&
+            !dados.usuario.codigoPersonal
+        ) {
+            throw new Error("Código do personal não encontrado.");
+        }
+
+        // SALVAR TOKEN JWT
+        localStorage.setItem("token", dados.token);
+
+        // SALVAR DADOS DO USUÁRIO
+        localStorage.setItem(
+            "usuario",
+            JSON.stringify(dados.usuario)
+        );
+
+        // REDIRECIONAR
+        if (tipoUsuario === "aluno") {
+            navigate("/aluno");
+        } else {
+            navigate("/personal");
+        }
+
+    } catch (error) {
+        console.error("Erro ao realizar login:", error);
+        setErro(error.message || "Erro ao conectar com o servidor.");
+    } finally {
+        setCarregando(false);
+    }
+};
+
 
     return (
         <div className="login">

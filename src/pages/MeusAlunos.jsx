@@ -1,8 +1,16 @@
-
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api.js";
 import "./MeusAlunos.css";
+
+function obterIdAluno(aluno) {
+  return (
+    aluno.codigoaluno ??
+    aluno.codigoAluno ??
+    aluno.id ??
+    aluno.idAluno
+  );
+}
 
 export default function MeusAlunos() {
   const navigate = useNavigate();
@@ -41,8 +49,12 @@ export default function MeusAlunos() {
     buscarAlunos();
   }, [buscarAlunos]);
 
+  // CORRIGIDO: antes navegava para "/aluno"
   function abrirAluno(aluno) {
-    navigate("/aluno", {
+    const idAluno = obterIdAluno(aluno);
+    if (idAluno == null) return;
+
+    navigate(`/personal/alunos/${idAluno}`, {
       state: { aluno },
     });
   }
@@ -96,11 +108,7 @@ export default function MeusAlunos() {
               </p>
             ) : (
               alunos.map((aluno, index) => {
-                const idAluno =
-                  aluno.codigoaluno ??
-                  aluno.codigoAluno ??
-                  aluno.id ??
-                  aluno.idAluno;
+                const idAluno = obterIdAluno(aluno);
 
                 const nomeAluno =
                   aluno.nome?.trim() ||
@@ -108,8 +116,7 @@ export default function MeusAlunos() {
                   "Aluno sem nome";
 
                 const emailAluno =
-                  aluno.email ||
-                  "E-mail não informado";
+                  aluno.email || "E-mail não informado";
 
                 return (
                   <button

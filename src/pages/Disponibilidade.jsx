@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -5,8 +6,38 @@ import "./Disponibilidade.css";
 
 const API_URL = "http://localhost:3000";
 
-// Personal "logado" (fixo por enquanto, troque quando o login estiver pronto).
-const CODIGO_PERSONAL = 1;
+function obterUsuario() {
+  try {
+    return JSON.parse(localStorage.getItem("usuario") || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function obterCodigoPersonal() {
+  const usuario = obterUsuario();
+
+  const codigo =
+    usuario.codigoPersonal ??
+    usuario.codigopersonal ??
+    usuario.personal?.codigoPersonal ??
+    usuario.personal?.codigopersonal;
+
+  return codigo ? Number(codigo) : null;
+}
+
+function obterToken() {
+  return localStorage.getItem("token");
+}
+
+function obterHeaders() {
+  const token = obterToken();
+
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
 
 function soData(valor) {
   return valor ? String(valor).split("T")[0] : "";
@@ -14,7 +45,9 @@ function soData(valor) {
 
 function formatarData(valor) {
   const [ano, mes, dia] = soData(valor).split("-");
-  return ano && mes && dia ? `${dia}/${mes}/${ano}` : "Data não informada";
+  return ano && mes && dia
+    ? `${dia}/${mes}/${ano}`
+    : "Data não informada";
 }
 
 function formatarHorario(valor) {
@@ -31,10 +64,16 @@ async function lerJson(response) {
   }
 }
 
+function mensagemErro(dados, padrao) {
+  return dados.erro || dados.message || dados.mensagem || padrao;
+}
+
 export default function Disponibilidade() {
   const navigate = useNavigate();
 
-  const hoje = new Date().toLocaleDateString("en-CA"); // aaaa-mm-dd
+  const hoje = new Date().toLocaleDateString("en-CA");
+
+  const [codigoPersonal] = useState(obterCodigoPersonal);
 
   const [horarios, setHorarios] = useState([]);
   const [data, setData] = useState("");
@@ -47,19 +86,30 @@ export default function Disponibilidade() {
   const [erro, setErro] = useState("");
   const [mensagem, setMensagem] = useState("");
 
-  // GET /disponibilidade/personal/:codigoPersonal/ativas
   const buscarHorarios = useCallback(async () => {
+    if (!codigoPersonal) {
+      setErro("Não foi possível identificar o personal logado. Faça login novamente.");
+      setCarregando(false);
+      return;
+    }
+
     try {
       setCarregando(true);
       setErro("");
 
       const response = await fetch(
-        `${API_URL}/disponibilidade/personal/${CODIGO_PERSONAL}/ativas`
+        `${API_URL}/disponibilidade/personal/${codigoPersonal}/ativas`,
+        {
+          headers: obterHeaders(),
+        }
       );
+
       const dados = await lerJson(response);
 
       if (!response.ok) {
-        throw new Error(dados.erro || "Não foi possível carregar os horários.");
+        throw new Error(
+          mensagemErro(dados, "Não foi possível carregar os horários.")
+        );
       }
 
       setHorarios(Array.isArray(dados) ? dados : []);
@@ -70,15 +120,24 @@ export default function Disponibilidade() {
     } finally {
       setCarregando(false);
     }
-  }, []);
+  }, [codigoPersonal]);
 
   useEffect(() => {
     buscarHorarios();
   }, [buscarHorarios]);
 
-  // POST /disponibilidade
   async function adicionar(event) {
     event.preventDefault();
+
+    if (!codigoPersonal) {
+      setErro("Personal não identificado. Faça login novamente.");
+      return;
+    }
+
+    if (!obterToken()) {
+      setErro("Token não encontrado. Faça login novamente.");
+      return;
+    }
 
     if (!data || !horarioInicio || !horarioFim) {
       setErro("Preencha a data, o início e o fim.");
@@ -97,9 +156,9 @@ export default function Disponibilidade() {
 
       const response = await fetch(`${API_URL}/disponibilidade`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: obterHeaders(),
         body: JSON.stringify({
-          codigoPersonal: CODIGO_PERSONAL,
+          codigoPersonal,
           dataDisponibilidade: data,
           horarioInicio,
           horarioFim,
@@ -110,12 +169,17 @@ export default function Disponibilidade() {
       const dados = await lerJson(response);
 
       if (!response.ok) {
-        throw new Error(dados.erro || "Não foi possível salvar o horário.");
+        console.error("Resposta do servidor:", response.status, dados);
+
+        throw new Error(
+          mensagemErro(dados, "Não foi possível salvar o horário.")
+        );
       }
 
       setMensagem("Horário adicionado com sucesso.");
       setHorarioInicio("");
       setHorarioFim("");
+
       await buscarHorarios();
     } catch (error) {
       console.error("Erro ao salvar horário:", error);
@@ -125,7 +189,6 @@ export default function Disponibilidade() {
     }
   }
 
-  // DELETE /disponibilidade/:id
   async function remover(item) {
     const confirmou = window.confirm(
       `Remover o horário de ${formatarData(item.dataDisponibilidade)} às ${formatarHorario(item.horarioInicio)}?`
@@ -140,19 +203,27 @@ export default function Disponibilidade() {
 
       const response = await fetch(
         `${API_URL}/disponibilidade/${item.codigoDisponibilidade}`,
-        { method: "DELETE" }
+        {
+          method: "DELETE",
+          headers: obterHeaders(),
+        }
       );
+
       const dados = await lerJson(response);
 
       if (!response.ok) {
-        throw new Error(dados.erro || "Não foi possível remover o horário.");
+        throw new Error(
+          mensagemErro(dados, "Não foi possível remover o horário.")
+        );
       }
 
       setHorarios((lista) =>
         lista.filter(
-          (h) => h.codigoDisponibilidade !== item.codigoDisponibilidade
+          (h) =>
+            h.codigoDisponibilidade !== item.codigoDisponibilidade
         )
       );
+
       setMensagem("Horário removido.");
     } catch (error) {
       console.error("Erro ao remover horário:", error);
@@ -167,7 +238,10 @@ export default function Disponibilidade() {
       <div className="disp-container">
         <header className="disp-cabecalho">
           <h1>Meus horários disponíveis</h1>
-          <p>Cadastre os dias e horários em que você atende. Seus alunos só poderão agendar nesses horários.</p>
+          <p>
+            Cadastre os dias e horários em que você atende.
+            Seus alunos só poderão agendar nesses horários.
+          </p>
         </header>
 
         <form className="disp-form" onSubmit={adicionar}>
@@ -205,28 +279,46 @@ export default function Disponibilidade() {
             </div>
           </div>
 
-          <button type="submit" className="disp-btn" disabled={salvando}>
+          <button
+            type="submit"
+            className="disp-btn"
+            disabled={salvando || !codigoPersonal}
+          >
             {salvando ? "Salvando..." : "Adicionar horário"}
           </button>
         </form>
 
-        {mensagem && <p className="disp-msg disp-sucesso">{mensagem}</p>}
-        {erro && <p className="disp-msg disp-erro">{erro}</p>}
+        {mensagem && (
+          <p className="disp-msg disp-sucesso">{mensagem}</p>
+        )}
+
+        {erro && (
+          <p className="disp-msg disp-erro">{erro}</p>
+        )}
 
         <h2 className="disp-subtitulo">Horários livres</h2>
 
-        {carregando && <p className="disp-vazio">Carregando...</p>}
+        {carregando && (
+          <p className="disp-vazio">Carregando...</p>
+        )}
 
         {!carregando && horarios.length === 0 && (
-          <p className="disp-vazio">Você ainda não cadastrou horários.</p>
+          <p className="disp-vazio">
+            Você ainda não cadastrou horários.
+          </p>
         )}
 
         {!carregando && horarios.length > 0 && (
           <ul className="disp-lista">
             {horarios.map((item) => (
-              <li key={item.codigoDisponibilidade} className="disp-card">
+              <li
+                key={item.codigoDisponibilidade}
+                className="disp-card"
+              >
                 <div>
-                  <strong>{formatarData(item.dataDisponibilidade)}</strong>
+                  <strong>
+                    {formatarData(item.dataDisponibilidade)}
+                  </strong>
                   <span>
                     {formatarHorario(item.horarioInicio)} às{" "}
                     {formatarHorario(item.horarioFim)}

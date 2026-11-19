@@ -5,9 +5,6 @@ import "./MeusHorarios.css";
 
 const API_URL = "http://localhost:3000";
 
-// Personal "logado" (fixo por enquanto, como nas outras telas do personal).
-const CODIGO_PERSONAL_LOGADO = 1;
-
 function formatarData(valor) {
   if (!valor) return "Data não informada";
 
@@ -49,6 +46,11 @@ export default function MeusHorarios() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Busca os dados do personal que realizou o login.
+  const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+  const codigoPersonal =
+    usuario?.codigoPersonal ?? usuario?.codigopersonal ?? null;
+
   const [agendamentos, setAgendamentos] = useState([]);
   const [nomesAlunos, setNomesAlunos] = useState({});
   const [carregando, setCarregando] = useState(true);
@@ -65,12 +67,19 @@ export default function MeusHorarios() {
   // GET /agendamento/personal/:codigoPersonal
   // ==============================
   const buscarAgenda = useCallback(async () => {
+    if (!codigoPersonal) {
+      setAgendamentos([]);
+      setErro("Personal não identificado. Faça login novamente.");
+      setCarregando(false);
+      return;
+    }
+
     try {
       setCarregando(true);
       setErro("");
 
       const response = await fetch(
-        `${API_URL}/agendamento/personal/${CODIGO_PERSONAL_LOGADO}`
+        `${API_URL}/agendamento/personal/${codigoPersonal}`
       );
 
       const dados = await lerJson(response);
@@ -93,10 +102,13 @@ export default function MeusHorarios() {
         const alunos = await lerJson(respostaAlunos);
 
         if (respostaAlunos.ok && Array.isArray(alunos)) {
-          // /alunos devolve os campos em minúsculas (codigoaluno, nome)
+          // /alunos pode devolver os campos em minúsculas (codigoaluno, nome)
           setNomesAlunos(
             Object.fromEntries(
-              alunos.map((aluno) => [aluno.codigoaluno, aluno.nome])
+              alunos.map((aluno) => [
+                aluno.codigoAluno ?? aluno.codigoaluno,
+                aluno.nome,
+              ])
             )
           );
         }
@@ -111,7 +123,7 @@ export default function MeusHorarios() {
     } finally {
       setCarregando(false);
     }
-  }, []);
+  }, [codigoPersonal]);
 
   useEffect(() => {
     buscarAgenda();
