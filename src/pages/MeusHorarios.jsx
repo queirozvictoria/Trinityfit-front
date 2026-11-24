@@ -1,16 +1,18 @@
+
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import api from "../services/api.js";
 
 import "./MeusHorarios.css";
-
-const API_URL = "http://localhost:3000";
 
 function formatarData(valor) {
   if (!valor) return "Data não informada";
 
   const [ano, mes, dia] = String(valor).split("T")[0].split("-");
 
-  return ano && mes && dia ? `${dia}/${mes}/${ano}` : "Data não informada";
+  return ano && mes && dia
+    ? `${dia}/${mes}/${ano}`
+    : "Data não informada";
 }
 
 function formatarHorario(valor) {
@@ -32,24 +34,18 @@ function nomeStatus(status) {
   return nomes[status] ?? status;
 }
 
-async function lerJson(response) {
-  const texto = await response.text();
-
-  try {
-    return texto ? JSON.parse(texto) : {};
-  } catch {
-    throw new Error("O servidor retornou uma resposta inválida.");
-  }
-}
-
 export default function MeusHorarios() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Busca os dados do personal que realizou o login.
-  const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+  const usuario = JSON.parse(
+    localStorage.getItem("usuario") || "null"
+  );
+
   const codigoPersonal =
-    usuario?.codigoPersonal ?? usuario?.codigopersonal ?? null;
+    usuario?.codigoPersonal ??
+    usuario?.codigopersonal ??
+    null;
 
   const [agendamentos, setAgendamentos] = useState([]);
   const [nomesAlunos, setNomesAlunos] = useState({});
@@ -57,7 +53,6 @@ export default function MeusHorarios() {
   const [atualizandoId, setAtualizandoId] = useState(null);
   const [erro, setErro] = useState("");
 
-  // Mensagem enviada por AlterarHorario / CancelarHorario ao voltar.
   const [mensagem, setMensagem] = useState(
     location.state?.mensagem ?? ""
   );
@@ -78,17 +73,11 @@ export default function MeusHorarios() {
       setCarregando(true);
       setErro("");
 
-      const response = await fetch(
-        `${API_URL}/agendamento/personal/${codigoPersonal}`
+      const resposta = await api.get(
+        `/agendamento/personal/${codigoPersonal}`
       );
 
-      const dados = await lerJson(response);
-
-      if (!response.ok) {
-        throw new Error(
-          dados.erro || "Não foi possível carregar sua agenda."
-        );
-      }
+      const dados = resposta.data;
 
       if (!Array.isArray(dados)) {
         throw new Error("A resposta do servidor não é uma lista.");
@@ -96,13 +85,12 @@ export default function MeusHorarios() {
 
       setAgendamentos(dados);
 
-      // Nomes dos alunos (opcional: se falhar, mostra o código).
+      // Buscar nomes dos alunos
       try {
-        const respostaAlunos = await fetch(`${API_URL}/alunos`);
-        const alunos = await lerJson(respostaAlunos);
+        const respostaAlunos = await api.get("/alunos");
+        const alunos = respostaAlunos.data;
 
-        if (respostaAlunos.ok && Array.isArray(alunos)) {
-          // /alunos pode devolver os campos em minúsculas (codigoaluno, nome)
+        if (Array.isArray(alunos)) {
           setNomesAlunos(
             Object.fromEntries(
               alunos.map((aluno) => [
@@ -113,13 +101,24 @@ export default function MeusHorarios() {
           );
         }
       } catch (erroAlunos) {
-        console.error("Erro ao buscar nomes dos alunos:", erroAlunos);
+        console.error(
+          "Erro ao buscar nomes dos alunos:",
+          erroAlunos
+        );
       }
+
     } catch (error) {
       console.error("Erro ao buscar agenda:", error);
 
       setAgendamentos([]);
-      setErro(error.message || "Não foi possível carregar sua agenda.");
+
+      setErro(
+        error.response?.data?.erro ||
+        error.response?.data?.message ||
+        error.message ||
+        "Não foi possível carregar sua agenda."
+      );
+
     } finally {
       setCarregando(false);
     }
@@ -146,36 +145,36 @@ export default function MeusHorarios() {
       setErro("");
       setMensagem("");
 
-      const response = await fetch(
-        `${API_URL}/agendamento/${agendamento.codigoAgendamento}/status`,
+      await api.patch(
+        `/agendamento/${agendamento.codigoAgendamento}/status`,
         {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ statusAgendamento: "CONFIRMADO" }),
+          statusAgendamento: "CONFIRMADO",
         }
       );
-
-      const dados = await lerJson(response);
-
-      if (!response.ok) {
-        throw new Error(
-          dados.erro || "Não foi possível confirmar o horário."
-        );
-      }
 
       setAgendamentos((lista) =>
         lista.map((item) =>
           item.codigoAgendamento === agendamento.codigoAgendamento
-            ? { ...item, statusAgendamento: "CONFIRMADO" }
+            ? {
+                ...item,
+                statusAgendamento: "CONFIRMADO",
+              }
             : item
         )
       );
 
       setMensagem("Horário confirmado com sucesso.");
+
     } catch (error) {
       console.error("Erro ao confirmar horário:", error);
 
-      setErro(error.message || "Não foi possível confirmar o horário.");
+      setErro(
+        error.response?.data?.erro ||
+        error.response?.data?.message ||
+        error.message ||
+        "Não foi possível confirmar o horário."
+      );
+
     } finally {
       setAtualizandoId(null);
     }
@@ -183,12 +182,14 @@ export default function MeusHorarios() {
 
   // ==============================
   // ALTERAR / CANCELAR
-  // As telas abrem com o agendamento completo no state.
   // ==============================
   function abrirTela(caminho, agendamento) {
     navigate(caminho, {
       state: {
-        horario: { ...agendamento, aluno: nomeDoAluno(agendamento) },
+        horario: {
+          ...agendamento,
+          aluno: nomeDoAluno(agendamento),
+        },
       },
     });
   }
@@ -196,6 +197,7 @@ export default function MeusHorarios() {
   return (
     <main className="mh">
       <div className="mh-container">
+
         <header className="mh-cabecalho">
           <div>
             <h1>Meus horários</h1>
@@ -244,7 +246,8 @@ export default function MeusHorarios() {
               );
 
               const ativo =
-                status === "PENDENTE" || status === "CONFIRMADO";
+                status === "PENDENTE" ||
+                status === "CONFIRMADO";
 
               const atualizando =
                 atualizandoId === agendamento.codigoAgendamento;
@@ -273,6 +276,7 @@ export default function MeusHorarios() {
 
                   {ativo && (
                     <div className="mh-acoes-card">
+
                       {status === "PENDENTE" && (
                         <button
                           type="button"
@@ -280,7 +284,9 @@ export default function MeusHorarios() {
                           onClick={() => confirmar(agendamento)}
                           disabled={atualizandoId !== null}
                         >
-                          {atualizando ? "Confirmando..." : "Confirmar"}
+                          {atualizando
+                            ? "Confirmando..."
+                            : "Confirmar"}
                         </button>
                       )}
 
@@ -305,6 +311,7 @@ export default function MeusHorarios() {
                       >
                         Cancelar
                       </button>
+
                     </div>
                   )}
                 </li>
@@ -331,6 +338,7 @@ export default function MeusHorarios() {
             {carregando ? "Atualizando..." : "Atualizar"}
           </button>
         </div>
+
       </div>
     </main>
   );

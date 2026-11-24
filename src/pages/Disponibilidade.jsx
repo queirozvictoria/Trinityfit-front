@@ -1,6 +1,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api.js";
 
 import "./Disponibilidade.css";
 
@@ -97,26 +98,27 @@ export default function Disponibilidade() {
       setCarregando(true);
       setErro("");
 
-      const response = await fetch(
-        `${API_URL}/disponibilidade/personal/${codigoPersonal}/ativas`,
+      const response = await api.get(
+        `/disponibilidade/personal/${codigoPersonal}/ativas`,
         {
           headers: obterHeaders(),
         }
       );
 
-      const dados = await lerJson(response);
-
-      if (!response.ok) {
-        throw new Error(
-          mensagemErro(dados, "Não foi possível carregar os horários.")
-        );
-      }
+      const dados = response.data;
 
       setHorarios(Array.isArray(dados) ? dados : []);
     } catch (error) {
       console.error("Erro ao buscar horários:", error);
+
       setHorarios([]);
-      setErro(error.message || "Não foi possível carregar os horários.");
+
+      setErro(
+        mensagemErro(
+          error.response?.data,
+          error.message || "Não foi possível carregar os horários."
+        )
+      );
     } finally {
       setCarregando(false);
     }
@@ -154,27 +156,21 @@ export default function Disponibilidade() {
       setErro("");
       setMensagem("");
 
-      const response = await fetch(`${API_URL}/disponibilidade`, {
-        method: "POST",
-        headers: obterHeaders(),
-        body: JSON.stringify({
+      const response = await api.post(
+        "/disponibilidade",
+        {
           codigoPersonal,
           dataDisponibilidade: data,
           horarioInicio,
           horarioFim,
           status: true,
-        }),
-      });
+        },
+        {
+          headers: obterHeaders(),
+        }
+      );
 
-      const dados = await lerJson(response);
-
-      if (!response.ok) {
-        console.error("Resposta do servidor:", response.status, dados);
-
-        throw new Error(
-          mensagemErro(dados, "Não foi possível salvar o horário.")
-        );
-      }
+      const dados = response.data;
 
       setMensagem("Horário adicionado com sucesso.");
       setHorarioInicio("");
@@ -182,8 +178,18 @@ export default function Disponibilidade() {
 
       await buscarHorarios();
     } catch (error) {
-      console.error("Erro ao salvar horário:", error);
-      setErro(error.message || "Não foi possível salvar o horário.");
+      console.error(
+        "Resposta do servidor:",
+        error.response?.status,
+        error.response?.data
+      );
+
+      setErro(
+        mensagemErro(
+          error.response?.data,
+          "Não foi possível salvar o horário."
+        )
+      );
     } finally {
       setSalvando(false);
     }
@@ -201,21 +207,14 @@ export default function Disponibilidade() {
       setErro("");
       setMensagem("");
 
-      const response = await fetch(
-        `${API_URL}/disponibilidade/${item.codigoDisponibilidade}`,
+      const response = await api.delete(
+        `/disponibilidade/${item.codigoDisponibilidade}`,
         {
-          method: "DELETE",
           headers: obterHeaders(),
         }
       );
 
-      const dados = await lerJson(response);
-
-      if (!response.ok) {
-        throw new Error(
-          mensagemErro(dados, "Não foi possível remover o horário.")
-        );
-      }
+      const dados = response.data;
 
       setHorarios((lista) =>
         lista.filter(
@@ -227,7 +226,13 @@ export default function Disponibilidade() {
       setMensagem("Horário removido.");
     } catch (error) {
       console.error("Erro ao remover horário:", error);
-      setErro(error.message || "Não foi possível remover o horário.");
+
+      setErro(
+        mensagemErro(
+          error.response?.data,
+          "Não foi possível remover o horário."
+        )
+      );
     } finally {
       setRemovendoId(null);
     }

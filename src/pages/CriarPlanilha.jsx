@@ -1,9 +1,9 @@
+
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import api from "../services/api.js";
 import "./CriarPlanilha.css";
-
-const API_URL = "http://localhost:3000";
 
 function nomeDoAluno(aluno) {
   return (
@@ -24,16 +24,6 @@ function novoExercicio(dados = {}) {
   };
 }
 
-// Converte o texto salvo no banco de volta para o formulário:
-//
-// Treino: Treino A - Peito e Tríceps
-// Objetivo: ...
-//
-// Exercícios:
-// 1. Nome
-// Séries: 4 | Repetições: 12 | Descanso: 60 segundos
-//
-// (planilhas antigas, sem a linha "Treino:", continuam sendo lidas normalmente)
 function lerDescricao(texto) {
   const descricao = String(texto ?? "");
 
@@ -79,12 +69,13 @@ export default function CriarPlanilha() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Busca os dados do personal que realizou o login.
+  // Dados do personal logado
   const usuario = JSON.parse(localStorage.getItem("usuario") || "null");
+
   const codigoPersonalLogado =
     usuario?.codigoPersonal ?? usuario?.codigopersonal ?? null;
 
-  // MODO EDIÇÃO: a planilha chega em location.state
+  // MODO EDIÇÃO
   const planoEdicao =
     location.state?.planilha ?? location.state?.plano ?? null;
 
@@ -96,15 +87,21 @@ export default function CriarPlanilha() {
     : null;
 
   const [planilha, setPlanilha] = useState({
-    // Lista de alunos marcados (no modo edição fica só o aluno da planilha)
     codigoAlunos: editando
-      ? [String(planoEdicao.codigoAluno ?? planoEdicao.codigoaluno ?? "")]
+      ? [
+          String(
+            planoEdicao.codigoAluno ??
+            planoEdicao.codigoaluno ??
+            ""
+          ),
+        ]
       : [],
     nomeTreino: dadosIniciais?.nomeTreino ?? "",
     objetivo: dadosIniciais?.objetivo ?? "",
   });
 
   const [alunos, setAlunos] = useState([]);
+
   const [exercicios, setExercicios] = useState(
     dadosIniciais?.exercicios ?? [novoExercicio()]
   );
@@ -113,10 +110,7 @@ export default function CriarPlanilha() {
   const [carregandoAlunos, setCarregandoAlunos] = useState(false);
   const [erro, setErro] = useState("");
 
-  // ==========================================
   // BUSCAR ALUNOS CADASTRADOS
-  // GET /alunos
-  // ==========================================
   useEffect(() => {
     let ativo = true;
 
@@ -124,44 +118,42 @@ export default function CriarPlanilha() {
       try {
         setCarregandoAlunos(true);
 
-        const response = await fetch(`${API_URL}/alunos`);
-        const texto = await response.text();
-
-        let dados;
-
-        try {
-          dados = texto ? JSON.parse(texto) : [];
-        } catch {
-          throw new Error("O servidor retornou uma resposta inválida.");
-        }
-
-        if (!response.ok) {
-          throw new Error(dados?.erro || "Não foi possível buscar os alunos.");
-        }
+        const response = await api.get("/alunos");
+        const dados = response.data;
 
         if (!Array.isArray(dados)) {
-          throw new Error("Os alunos retornados pelo servidor são inválidos.");
+          throw new Error(
+            "Os alunos retornados pelo servidor são inválidos."
+          );
         }
 
-        // /alunos pode devolver os campos em minúsculas (codigoaluno),
-        // então normaliza para codigoAluno.
         if (ativo) {
           setAlunos(
             dados.map((aluno) => ({
               ...aluno,
-              codigoAluno: aluno.codigoAluno ?? aluno.codigoaluno,
+              codigoAluno:
+                aluno.codigoAluno ?? aluno.codigoaluno,
             }))
           );
         }
+
       } catch (error) {
         console.error("Erro ao buscar alunos:", error);
 
         if (ativo) {
           setAlunos([]);
-          setErro(error.message || "Não foi possível carregar os alunos.");
+
+          setErro(
+            error.response?.data?.erro ||
+            error.message ||
+            "Não foi possível carregar os alunos."
+          );
         }
+
       } finally {
-        if (ativo) setCarregandoAlunos(false);
+        if (ativo) {
+          setCarregandoAlunos(false);
+        }
       }
     }
 
@@ -181,7 +173,7 @@ export default function CriarPlanilha() {
     }));
   }
 
-  // Marca / desmarca um aluno na lista
+  // MARCAR OU DESMARCAR ALUNO
   function alternarAluno(codigoAluno) {
     setErro("");
 
@@ -195,7 +187,7 @@ export default function CriarPlanilha() {
     }));
   }
 
-  // Marca todos ou desmarca todos
+  // MARCAR TODOS OU DESMARCAR TODOS
   function alternarTodos() {
     setErro("");
 
@@ -222,10 +214,13 @@ export default function CriarPlanilha() {
     setErro("");
 
     setExercicios((lista) =>
-      lista.map((e) => (e.id === id ? { ...e, [campo]: valor } : e))
+      lista.map((e) =>
+        e.id === id ? { ...e, [campo]: valor } : e
+      )
     );
   }
 
+  // VALIDAR FORMULÁRIO
   function validarFormulario() {
     const codigoPersonal =
       planoEdicao?.codigoPersonal ?? codigoPersonalLogado;
@@ -236,7 +231,9 @@ export default function CriarPlanilha() {
 
     if (
       planilha.codigoAlunos.length === 0 ||
-      planilha.codigoAlunos.some((c) => !c || Number.isNaN(Number(c)))
+      planilha.codigoAlunos.some(
+        (c) => !c || Number.isNaN(Number(c))
+      )
     ) {
       return "Selecione pelo menos um aluno.";
     }
@@ -276,7 +273,7 @@ export default function CriarPlanilha() {
     return "";
   }
 
-  // Monta o texto salvo no banco (nome do treino + objetivo + todos os exercícios)
+  // MONTAR DESCRIÇÃO
   function montarDescricao() {
     const gridExercicios = exercicios
       .map(
@@ -295,52 +292,39 @@ export default function CriarPlanilha() {
     );
   }
 
-  // Envia a planilha de UM aluno (POST ou PUT)
+  // ENVIAR PLANILHA DE UM ALUNO
   async function enviarPlanilha(codigoAluno, descricaoPlanoTreino) {
-    const url = editando
-      ? `${API_URL}/plano-treino/${codigoPlanoEdicao}`
-      : `${API_URL}/plano-treino`;
+    const dados = {
+      codigoAluno: Number(codigoAluno),
 
-    const response = await fetch(url, {
-      method: editando ? "PUT" : "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        codigoAluno: Number(codigoAluno),
-        codigoPersonal: Number(
-          planoEdicao?.codigoPersonal ?? codigoPersonalLogado
-        ),
-        // mantém o vínculo com o agendamento, se a planilha já tinha
-        codigoAgendamento: planoEdicao?.codigoAgendamento ?? null,
-        descricaoPlanoTreino,
-      }),
-    });
+      codigoPersonal: Number(
+        planoEdicao?.codigoPersonal ?? codigoPersonalLogado
+      ),
 
-    const texto = await response.text();
+      codigoAgendamento:
+        planoEdicao?.codigoAgendamento ?? null,
 
-    let dados = {};
+      descricaoPlanoTreino,
+    };
 
-    try {
-      dados = texto ? JSON.parse(texto) : {};
-    } catch {
-      throw new Error("O servidor retornou uma resposta inválida.");
-    }
-
-    if (!response.ok) {
-      throw new Error(
-        dados?.erro || "Não foi possível salvar o plano de treino."
+    if (editando) {
+      const response = await api.put(
+        `/plano-treino/${codigoPlanoEdicao}`,
+        dados
       );
+
+      return response.data;
     }
 
-    return dados;
+    const response = await api.post(
+      "/plano-treino",
+      dados
+    );
+
+    return response.data;
   }
 
-  // ==========================================
   // SALVAR PLANILHA
-  // - criando: uma planilha (POST) para cada aluno marcado
-  // - editando: PUT na planilha do aluno
-  // ==========================================
   async function salvarPlanilha(event) {
     event.preventDefault();
 
@@ -360,7 +344,9 @@ export default function CriarPlanilha() {
       const codigos = planilha.codigoAlunos;
 
       const resultados = await Promise.allSettled(
-        codigos.map((codigo) => enviarPlanilha(codigo, descricaoPlanoTreino))
+        codigos.map((codigo) =>
+          enviarPlanilha(codigo, descricaoPlanoTreino)
+        )
       );
 
       const falhas = codigos.filter(
@@ -375,12 +361,13 @@ export default function CriarPlanilha() {
             const aluno = alunos.find(
               (a) => String(a.codigoAluno) === String(codigo)
             );
-            return aluno ? nomeDoAluno(aluno) : `Aluno ${codigo}`;
+
+            return aluno
+              ? nomeDoAluno(aluno)
+              : `Aluno ${codigo}`;
           })
           .join(", ");
 
-        // Deixa marcados só os alunos que falharam, para tentar de novo
-        // sem duplicar a planilha de quem já foi salvo.
         setPlanilha((estadoAnterior) => ({
           ...estadoAnterior,
           codigoAlunos: falhas.map(String),
@@ -389,7 +376,8 @@ export default function CriarPlanilha() {
         setErro(
           (salvos > 0
             ? `${salvos} planilha(s) salva(s). `
-            : "") + `Não foi possível salvar para: ${nomesFalhas}.`
+            : "") +
+          `Não foi possível salvar para: ${nomesFalhas}.`
         );
 
         return;
@@ -404,25 +392,34 @@ export default function CriarPlanilha() {
       );
 
       navigate("/planilhas");
+
     } catch (error) {
       console.error("Erro ao salvar plano:", error);
 
       setErro(
-        error.message || "Não foi possível salvar o plano de treino."
+        error.response?.data?.erro ||
+        error.response?.data?.message ||
+        error.message ||
+        "Não foi possível salvar o plano de treino."
       );
+
     } finally {
       setCarregando(false);
     }
   }
 
   const todosMarcados =
-    alunos.length > 0 && planilha.codigoAlunos.length === alunos.length;
+    alunos.length > 0 &&
+    planilha.codigoAlunos.length === alunos.length;
 
   return (
     <main className="criar-planilha">
       <div className="criar-planilha-container">
         <header className="criar-planilha-cabecalho">
-          <h1>{editando ? "Editar Planilha" : "Criar Planilha"}</h1>
+          <h1>
+            {editando ? "Editar Planilha" : "Criar Planilha"}
+          </h1>
+
           <p>
             {editando
               ? "Altere o treino personalizado do seu aluno."
@@ -444,21 +441,23 @@ export default function CriarPlanilha() {
             <div className="campo-planilha">
               <label>
                 {editando ? "Aluno" : "Alunos"}
+
                 {!editando && planilha.codigoAlunos.length > 0 && (
                   <> ({planilha.codigoAlunos.length} selecionado(s))</>
                 )}
               </label>
 
               {editando ? (
-                // Na edição a planilha pertence a um aluno só
                 <input
                   type="text"
                   className="input-planilha"
                   value={(() => {
                     const aluno = alunos.find(
                       (a) =>
-                        String(a.codigoAluno) === planilha.codigoAlunos[0]
+                        String(a.codigoAluno) ===
+                        planilha.codigoAlunos[0]
                     );
+
                     return aluno
                       ? nomeDoAluno(aluno)
                       : `Aluno ${planilha.codigoAlunos[0]}`;
@@ -467,11 +466,15 @@ export default function CriarPlanilha() {
                 />
               ) : (
                 <>
-                  {carregandoAlunos && <small>Carregando alunos...</small>}
-
-                  {!carregandoAlunos && alunos.length === 0 && !erro && (
-                    <small>Nenhum aluno cadastrado.</small>
+                  {carregandoAlunos && (
+                    <small>Carregando alunos...</small>
                   )}
+
+                  {!carregandoAlunos &&
+                    alunos.length === 0 &&
+                    !erro && (
+                      <small>Nenhum aluno cadastrado.</small>
+                    )}
 
                   {alunos.length > 0 && (
                     <div className="lista-alunos">
@@ -482,6 +485,7 @@ export default function CriarPlanilha() {
                           onChange={alternarTodos}
                           disabled={carregando}
                         />
+
                         <span>Marcar todos</span>
                       </label>
 
@@ -495,9 +499,12 @@ export default function CriarPlanilha() {
                             checked={planilha.codigoAlunos.includes(
                               String(aluno.codigoAluno)
                             )}
-                            onChange={() => alternarAluno(aluno.codigoAluno)}
+                            onChange={() =>
+                              alternarAluno(aluno.codigoAluno)
+                            }
                             disabled={carregando}
                           />
+
                           <span>{nomeDoAluno(aluno)}</span>
                         </label>
                       ))}
@@ -509,7 +516,9 @@ export default function CriarPlanilha() {
 
             {/* NOME DO TREINO */}
             <div className="campo-planilha">
-              <label htmlFor="nomeTreino">Nome do treino</label>
+              <label htmlFor="nomeTreino">
+                Nome do treino
+              </label>
 
               <input
                 id="nomeTreino"
@@ -527,7 +536,9 @@ export default function CriarPlanilha() {
 
             {/* OBJETIVO */}
             <div className="campo-planilha">
-              <label htmlFor="objetivo">Objetivo</label>
+              <label htmlFor="objetivo">
+                Objetivo
+              </label>
 
               <input
                 id="objetivo"
@@ -544,11 +555,15 @@ export default function CriarPlanilha() {
             </div>
           </section>
 
+          {/* EXERCÍCIOS */}
           <section className="planilha-secao">
             <h2>Exercícios</h2>
 
             {exercicios.map((exercicio, index) => (
-              <div className="exercicio-card" key={exercicio.id}>
+              <div
+                className="exercicio-card"
+                key={exercicio.id}
+              >
                 <div className="exercicio-cabecalho-card">
                   <h3>Exercício #{index + 1}</h3>
 
@@ -556,7 +571,9 @@ export default function CriarPlanilha() {
                     <button
                       type="button"
                       className="btn-remover"
-                      onClick={() => removerExercicio(exercicio.id)}
+                      onClick={() =>
+                        removerExercicio(exercicio.id)
+                      }
                       disabled={carregando}
                     >
                       Remover
@@ -589,7 +606,9 @@ export default function CriarPlanilha() {
                   </div>
 
                   <div className="campo-planilha">
-                    <label htmlFor={`series-${exercicio.id}`}>Séries</label>
+                    <label htmlFor={`series-${exercicio.id}`}>
+                      Séries
+                    </label>
 
                     <input
                       id={`series-${exercicio.id}`}

@@ -28,7 +28,9 @@
     box-shadow 0.25s ease;
 }
 
-/* DETALHE DECORATIVO */
+/*=======================================================
+ DETALHE DECORATIVO 
+ ========================================================*/
 
 .aluno-card::after {
   content: "";
@@ -45,7 +47,9 @@
   pointer-events: none;
 }
 
-/* HOVER E CLIQUE */
+/*================================
+ HOVER E CLIQUE 
+ =======================================*/
 
 .aluno-card:hover:not(:disabled) {
   transform: translateY(-5px);
@@ -60,7 +64,9 @@
   transform: translateY(-2px);
 }
 
-/* BOTÃO DO CARD */
+/*==================================
+ BOTÃO DO CARD 
+ ==================================*/
 
 button.aluno-card {
   display: block;

@@ -2,9 +2,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import api from "../services/api.js";
 import "./AgendarAluno.css";
-
-const API_URL = "http://localhost:3000";
 
 function obterUsuario() {
   try {
@@ -20,21 +19,13 @@ function soData(valor) {
 
 function formatarData(valor) {
   const [ano, mes, dia] = soData(valor).split("-");
-  return ano && mes && dia ? `${dia}/${mes}/${ano}` : "Data não informada";
+  return ano && mes && dia
+    ? `${dia}/${mes}/${ano}`
+    : "Data não informada";
 }
 
 function formatarHorario(valor) {
   return valor ? String(valor).slice(0, 5) : "--:--";
-}
-
-async function lerJson(response) {
-  const texto = await response.text();
-
-  try {
-    return texto ? JSON.parse(texto) : {};
-  } catch {
-    throw new Error(texto || "O servidor retornou uma resposta inválida.");
-  }
 }
 
 export default function AgendarAluno() {
@@ -51,6 +42,9 @@ export default function AgendarAluno() {
   ) || null;
 
   const token = localStorage.getItem("token");
+
+  console.log("Token encontrado:", !!token);
+  console.log("Usuário encontrado:", usuario);
 
   const [personais, setPersonais] = useState([]);
   const [personal, setPersonal] = useState("");
@@ -71,29 +65,28 @@ export default function AgendarAluno() {
         setCarregandoPersonais(true);
         setErro("");
 
-        const response = await fetch(`${API_URL}/personal`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await api.get("/personal");
 
-        const dados = await lerJson(response);
+        setPersonais(
+          Array.isArray(response.data) ? response.data : []
+        );
 
-        if (!response.ok) {
-          throw new Error(dados.erro || dados.message || "Não foi possível carregar os personais.");
-        }
-
-        setPersonais(Array.isArray(dados) ? dados : []);
       } catch (error) {
         console.error("Erro ao buscar personais:", error);
-        setErro(error.message);
+
+        setErro(
+          error.response?.data?.erro ||
+          error.response?.data?.message ||
+          "Não foi possível carregar os personais."
+        );
+
       } finally {
         setCarregandoPersonais(false);
       }
     }
 
     buscarPersonais();
-  }, [token]);
+  }, []);
 
   // BUSCAR HORÁRIOS ATIVOS DO PERSONAL
   async function escolherPersonal(codigo) {
@@ -107,29 +100,29 @@ export default function AgendarAluno() {
     try {
       setCarregandoHorarios(true);
 
-      const response = await fetch(
-        `${API_URL}/disponibilidade/personal/${codigo}/ativas`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const response = await api.get(
+        `/disponibilidade/personal/${codigo}/ativas`
       );
 
-      const dados = await lerJson(response);
+      const dados = response.data;
 
-      if (!response.ok) {
-        throw new Error(dados.erro || dados.message || "Não foi possível carregar os horários.");
-      }
-
-      const futuras = (Array.isArray(dados) ? dados : []).filter(
+      const futuras = (
+        Array.isArray(dados) ? dados : []
+      ).filter(
         (item) => soData(item.dataDisponibilidade) >= hoje
       );
 
       setDisponibilidades(futuras);
+
     } catch (error) {
       console.error("Erro ao buscar horários:", error);
-      setErro(error.message);
+
+      setErro(
+        error.response?.data?.erro ||
+        error.response?.data?.message ||
+        "Não foi possível carregar os horários."
+      );
+
     } finally {
       setCarregandoHorarios(false);
     }
@@ -167,7 +160,9 @@ export default function AgendarAluno() {
     );
 
     if (!slot) {
-      setErro("O horário selecionado não foi encontrado. Selecione novamente.");
+      setErro(
+        "O horário selecionado não foi encontrado. Selecione novamente."
+      );
       return;
     }
 
@@ -192,32 +187,20 @@ export default function AgendarAluno() {
 
       console.log("Dados do agendamento:", dadosAgendamento);
 
-      const response = await fetch(`${API_URL}/agendamento`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(dadosAgendamento),
-      });
-
-      const dados = await lerJson(response);
-
-      if (!response.ok) {
-        console.error("Resposta do backend:", response.status, dados);
-
-        throw new Error(
-          dados.erro ||
-          dados.message ||
-          `Erro ${response.status}: não foi possível agendar.`
-        );
-      }
+      await api.post("/agendamento", dadosAgendamento);
 
       alert("Horário agendado com sucesso!");
       navigate("/meus-horarios-aluno");
+
     } catch (error) {
       console.error("Erro ao agendar horário:", error);
-      setErro(error.message);
+
+      setErro(
+        error.response?.data?.erro ||
+        error.response?.data?.message ||
+        "Não foi possível agendar o horário."
+      );
+
     } finally {
       setCarregando(false);
     }
@@ -250,7 +233,8 @@ export default function AgendarAluno() {
             </option>
 
             {personais.map((item) => {
-              const codigo = item.codigoPersonal ?? item.codigopersonal;
+              const codigo =
+                item.codigoPersonal ?? item.codigopersonal;
 
               return (
                 <option key={codigo} value={codigo}>

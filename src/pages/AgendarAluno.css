@@ -35,7 +35,9 @@
   box-sizing: border-box;
 }
 
-/* Manchas de luz ao fundo */
+/*=============================================
+ Manchas de luz ao fundo
+ ============================================== */
 .agendar::before,
 .agendar::after {
   content: "";
@@ -91,7 +93,10 @@
   margin-bottom: 26px;
 }
 
-/* Traço decorativo acima do título */
+/* ======================================================
+Traço decorativo acima do título 
+==========================================================*/
+
 .agendar-cabecalho::before {
   content: "";
   display: block;
@@ -113,7 +118,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: var(--cor-titulo); /* fallback */
+  color: var(--cor-titulo); 
 }
 
 .agendar-cabecalho p {
@@ -124,7 +129,7 @@
 }
 
 /* =====================================================
-   FORMULÁRIO (CARD)
+   FORMULÁRIO 
    ===================================================== */
 
 .agendar-form {
@@ -145,7 +150,7 @@
     0 24px 60px rgba(76, 29, 149, 0.12);
 }
 
-/* Faixa de cor no topo do card */
+
 .agendar-form::before {
   content: "";
   position: absolute;
@@ -218,7 +223,9 @@
   cursor: not-allowed;
 }
 
-/* Select com seta própria */
+/*========================================================
+ Select com seta própria
+ ========================================================= */
 .agendar-form select {
   appearance: none;
   -webkit-appearance: none;

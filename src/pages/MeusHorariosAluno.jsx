@@ -1,6 +1,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api.js";
 
 import "./MeusHorariosAluno.css";
 
@@ -93,7 +94,7 @@ export default function MeusHorariosAluno() {
       setCarregando(true);
       setErro("");
 
-      const response = await fetch(
+      const response = await api.get(
         `${API_URL}/agendamento/aluno/${codigoAluno}`,
         {
           headers: {
@@ -102,15 +103,7 @@ export default function MeusHorariosAluno() {
         }
       );
 
-      const dados = await lerJson(response);
-
-      if (!response.ok) {
-        throw new Error(
-          dados.erro ||
-          dados.message ||
-          "Não foi possível carregar seus horários."
-        );
-      }
+      const dados = response.data;
 
       if (!Array.isArray(dados)) {
         throw new Error("A resposta do servidor não é uma lista.");
@@ -120,7 +113,12 @@ export default function MeusHorariosAluno() {
     } catch (error) {
       console.error("Erro ao buscar horários do aluno:", error);
       setAgendamentos([]);
-      setErro(error.message);
+      setErro(
+        error.response?.data?.erro ||
+        error.response?.data?.message ||
+        error.message ||
+        "Não foi possível carregar seus horários."
+      );
     } finally {
       setCarregando(false);
     }
@@ -150,29 +148,20 @@ export default function MeusHorariosAluno() {
       setErro("");
       setMensagem("");
 
-      const response = await fetch(
+      const response = await api.patch(
         `${API_URL}/agendamento/${agendamento.codigoAgendamento}/status`,
         {
-          method: "PATCH",
+          statusAgendamento: "CANCELADO",
+        },
+        {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            statusAgendamento: "CANCELADO",
-          }),
         }
       );
 
-      const dados = await lerJson(response);
-
-      if (!response.ok) {
-        throw new Error(
-          dados.erro ||
-          dados.message ||
-          "Não foi possível desmarcar o horário."
-        );
-      }
+      const dados = response.data;
 
       setAgendamentos((lista) =>
         lista.map((item) =>
@@ -185,7 +174,12 @@ export default function MeusHorariosAluno() {
       setMensagem("Horário desmarcado com sucesso.");
     } catch (error) {
       console.error("Erro ao desmarcar horário:", error);
-      setErro(error.message);
+      setErro(
+        error.response?.data?.erro ||
+        error.response?.data?.message ||
+        error.message ||
+        "Não foi possível desmarcar o horário."
+      );
     } finally {
       setCancelandoId(null);
     }

@@ -43,21 +43,40 @@ export default function PlanilhasTreinoAluno() {
 
       const codigoAluno = usuario?.codigoAluno;
 
+      // Recupera o token armazenado durante o login
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error(
+          "Sua sessão expirou. Faça login novamente."
+        );
+      }
+
       if (!codigoAluno) {
         throw new Error(
           "Aluno não identificado. Faça login novamente."
         );
       }
 
+      // Envia o token JWT para o middleware
       const response = await fetch(
-        `${API_URL}/plano-treino/aluno/${codigoAluno}`
+        `${API_URL}/plano-treino/aluno/${codigoAluno}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       const dados = await response.json();
 
       if (!response.ok) {
         throw new Error(
-          dados.erro || "Não foi possível carregar seus treinos."
+          dados.erro ||
+          dados.message ||
+          "Não foi possível carregar seus treinos."
         );
       }
 
@@ -71,9 +90,11 @@ export default function PlanilhasTreinoAluno() {
 
     } catch (error) {
       console.error("Erro ao buscar planilhas:", error);
+
       setErro(
         error.message || "Erro ao conectar com o servidor."
       );
+
     } finally {
       setCarregando(false);
     }

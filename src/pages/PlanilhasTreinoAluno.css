@@ -400,7 +400,7 @@ select {
 }
 
 /* ==============================
-   Responsivo — Tablet
+   Responsivo  
 ============================== */
 
 @media (max-width: 700px) {
@@ -448,7 +448,7 @@ select {
 }
 
 /* ==============================
-   Responsivo — Celular
+   Responsivo 
 ============================== */
 
 @media (max-width: 480px) {

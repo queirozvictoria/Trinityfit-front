@@ -3,8 +3,7 @@
    ===================================================== */
 
 /* =====================================================
-   VARIÁVEIS EXCLUSIVAS (globais) E RESET
-   As cores principais da tela ficam dentro de .criar-planilha
+   VARIÁVEIS EXCLUSIVAS (globais) 
    ===================================================== */
 
 :root {
@@ -105,7 +104,9 @@ img {
   background: #f6f3fc;
 }
 
-/* Manchas de luz ao fundo */
+/* ==================================================
+Manchas de luz ao fundo 
+=====================================================*/
 .criar-planilha::before,
 .criar-planilha::after {
   content: "";
@@ -166,7 +167,7 @@ img {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: var(--roxo-escuro); /* fallback */
+  color: var(--roxo-escuro); 
 }
 
 .criar-planilha-cabecalho h1::after {
@@ -306,7 +307,9 @@ img {
   cursor: not-allowed;
 }
 
-/* Select com seta própria */
+/*=======================================================
+ Select com seta própria 
+ =========================================================*/
 .criar-planilha select {
   appearance: none;
   -webkit-appearance: none;
@@ -387,7 +390,9 @@ img {
   background: #f3edff;
 }
 
-/* Destaca o aluno marcado (navegadores com suporte a :has) */
+/* ==================================================
+Destaca o aluno marcado 
+==================================================== */
 .criar-planilha .aluno-opcao:has(input:checked) {
   background: #f1eafe;
   border-color: #ddd0f8;
@@ -433,7 +438,9 @@ img {
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-/* Barra lateral do cartão */
+/*==========================================
+ Barra lateral do cartão
+ ============================================ */
 .criar-planilha .exercicio-item::before,
 .criar-planilha .exercicio-card::before {
   content: "";
@@ -471,8 +478,9 @@ img {
   font-weight: 800;
 }
 
-/* Nome do exercício em linha própria.
-   Séries, repetições e descanso lado a lado. */
+/* =======================================
+Nome do exercício em linha própria
+========================================== */
 .criar-planilha .exercicio-campos {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -510,7 +518,9 @@ img {
   filter: none;
 }
 
-/* Principal */
+/*=========================================
+Principal
+============================================ */
 .criar-planilha .botao-principal,
 .criar-planilha button[type="submit"] {
   color: #fff;
@@ -525,7 +535,9 @@ img {
   filter: brightness(1.05);
 }
 
-/* Secundário */
+/* ==========================================================
+Secundário
+============================================================== */
 .criar-planilha .botao-secundario {
   color: var(--cor-label);
   background: #fff;
@@ -537,7 +549,9 @@ img {
   border-color: #d6c9f2;
 }
 
-/* Adicionar exercício */
+/*===================================================
+ Adicionar exercício
+ ============================================ */
 .criar-planilha .btn-adicionar {
   align-self: flex-start;
   color: var(--roxo-medio);
@@ -551,7 +565,9 @@ img {
   transform: translateY(-1px);
 }
 
-/* Remover exercício */
+/* ================================================
+Remover exercício
+==================================================== */
 .criar-planilha .btn-remover {
   min-height: 36px;
   padding: 7px 14px;

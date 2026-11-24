@@ -116,7 +116,9 @@
     transform 0.2s ease;
 }
 
-/* Botão secundário */
+/*=================================================
+ Botão secundário
+ ================================================== */
 
 .mha-btn-secundario {
   color: #6d28d9;
@@ -135,7 +137,9 @@
   transform: translateY(-2px);
 }
 
-/* Botão desmarcar */
+/* ============================================
+Botão desmarcar
+================================================= */
 
 .mha-btn-desmarcar {
   color: #b91c1c;
@@ -152,7 +156,9 @@
   transform: translateY(-2px);
 }
 
-/* Estados dos botões */
+/*========================================================
+ Estados dos botões
+ ======================================================== */
 
 .mha button:active:not(:disabled) {
   transform: scale(0.98);
@@ -243,7 +249,9 @@
     box-shadow 0.25s ease;
 }
 
-/* Indicador lateral */
+/*==================================================
+ Indicador lateral 
+ ===================================================*/
 
 .mha-card::before {
   content: "";
@@ -264,7 +272,9 @@
   pointer-events: none;
 }
 
-/* Detalhe decorativo */
+/* =====================================================
+Detalhe decorativo 
+=======================================================*/
 
 .mha-card::after {
   content: "";
@@ -341,7 +351,9 @@
   overflow-wrap: anywhere;
 }
 
-/* Pendente */
+/* ============================================
+Pendente 
+================================================*/
 
 .mha-status-pendente {
   color: #92400e;
@@ -349,7 +361,9 @@
   border: 1px solid #fde68a;
 }
 
-/* Confirmado */
+/*===================================================
+ Confirmado 
+ =====================================================*/
 
 .mha-status-confirmado {
   color: #166534;
@@ -357,7 +371,9 @@
   border: 1px solid #bbf7d0;
 }
 
-/* Concluído */
+/*============================================ 
+Concluído
+================================================ */
 
 .mha-status-concluido {
   color: #5b21b6;
@@ -365,7 +381,9 @@
   border: 1px solid #ddd6fe;
 }
 
-/* Cancelado */
+/*==============================================
+ Cancelado 
+ ====================================================*/
 
 .mha-status-cancelado {
   color: #991b1b;

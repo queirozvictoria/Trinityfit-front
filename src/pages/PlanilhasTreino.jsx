@@ -1,19 +1,14 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api.js";
 import "./PlanilhasTreino.css";
 
-const API_BASE = "http://localhost:3000";
-const API_URL = `${API_BASE}/plano-treino`;
+const API_URL = "/plano-treino";
 
 async function buscarContexto() {
-  const resposta = await fetch(`${API_BASE}/alunos`);
-
-  if (!resposta.ok) {
-    throw new Error("Erro ao buscar alunos");
-  }
-
-  const alunos = await resposta.json();
+  const resposta = await api.get("/alunos");
+  const alunos = resposta.data;
 
   return {
     alunos: alunos.reduce((mapa, aluno) => {
@@ -79,21 +74,15 @@ export default function PlanilhasTreino() {
 
       const [respostaPlanilhas, dadosContexto] =
         await Promise.all([
-          fetch(API_URL),
+          api.get(API_URL),
           buscarContexto(),
         ]);
 
-      if (!respostaPlanilhas.ok) {
-        throw new Error("Erro ao buscar planilhas de treino");
-      }
-
-      const dadosPlanilhas = await respostaPlanilhas.json();
-
-      setPlanilhas(dadosPlanilhas);
+      setPlanilhas(respostaPlanilhas.data);
       setContexto(dadosContexto);
 
     } catch (error) {
-      console.error(error);
+      console.error("Erro ao carregar planilhas:", error);
       setErro("Não foi possível carregar as planilhas.");
 
     } finally {
@@ -113,16 +102,9 @@ export default function PlanilhasTreino() {
     if (!confirmar) return;
 
     try {
-      const resposta = await fetch(
-        `${API_URL}/${codigoPlanoTreino}`,
-        {
-          method: "DELETE",
-        }
+      await api.delete(
+        `${API_URL}/${codigoPlanoTreino}`
       );
-
-      if (!resposta.ok) {
-        throw new Error("Erro ao excluir planilha");
-      }
 
       setPlanilhas((anteriores) =>
         anteriores.filter(
@@ -131,9 +113,15 @@ export default function PlanilhasTreino() {
         )
       );
 
+      window.alert("Planilha excluída com sucesso!");
+
     } catch (error) {
-      console.error(error);
-      window.alert("Não foi possível excluir a planilha.");
+      console.error("Erro ao excluir planilha:", error);
+
+      window.alert(
+        error.response?.data?.erro ??
+        "Não foi possível excluir a planilha."
+      );
     }
   }
 

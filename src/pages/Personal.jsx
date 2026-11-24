@@ -1,6 +1,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api.js";
 
 import "./Personal.css";
 
@@ -46,23 +47,21 @@ export default function Personal() {
       setCarregando(true);
       setErro("");
 
-      const response = await fetch(
+      const response = await api.get(
         `${API_URL}/personal/${codigoPersonal}`
       );
 
-      const dados = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          dados.erro || "Não foi possível carregar os dados do personal."
-        );
-      }
+      const dados = response.data;
 
       setPersonal(dados);
     } catch (error) {
       console.error("Erro ao buscar dados do personal:", error);
 
-      setErro(error.message || "Erro ao carregar os dados.");
+      setErro(
+        error.response?.data?.erro ||
+        error.message ||
+        "Erro ao carregar os dados."
+      );
     } finally {
       setCarregando(false);
     }

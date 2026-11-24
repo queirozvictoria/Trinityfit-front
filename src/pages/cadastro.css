@@ -1,6 +1,5 @@
 /* =====================================================
    CONFIGURAÇÃO GERAL
-   (mantive suas variáveis, caso outras telas usem)
    ===================================================== */
 
 :root {
@@ -63,7 +62,9 @@ select {
   background: #f6f3fc;
 }
 
-/* Manchas de luz ao fundo */
+/* ===================================================
+Manchas de luz ao fundo 
+======================================================*/
 .cadastro::before,
 .cadastro::after {
   content: "";
@@ -113,7 +114,9 @@ select {
   animation: aparecerCadastro 0.45s ease both;
 }
 
-/* Faixa de cor no topo */
+/* ===============================
+Faixa de cor no topo
+================================= */
 .cadastro-caixa::before {
   content: "";
   position: absolute;
@@ -292,7 +295,9 @@ select {
   cursor: not-allowed;
 }
 
-/* Select com seta própria */
+/* ====================================
+Select com seta própria 
+======================================*/
 .form-cadastro select {
   appearance: none;
   -webkit-appearance: none;
